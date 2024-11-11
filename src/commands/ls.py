@@ -4,7 +4,7 @@ from pathlib import Path
 from langchain_core.prompts import ChatPromptTemplate
 from commands.command import Command
 import constants
-from utils.path_utils import resolve_directory, get_all_directories
+from utils.path_utils import get_all_directories, resolve_path
 
 
 class ls(Command):
@@ -40,7 +40,6 @@ class ls(Command):
         )
 
     def execute(self, args: Any) -> None:
-        self.print(args, constants.CURRENT_DIRECTORY)
         directory = args.directory
         if args.query:
             all_paths = get_all_directories()
@@ -65,8 +64,8 @@ class ls(Command):
                     f"[blue]{dir_path}[/blue]: [green]{', '.join(files)}[/green]"
                 )
             return
-        target_path = resolve_directory(
-            directory if directory else constants.CURRENT_DIRECTORY
+        target_path = resolve_path(
+            directory if directory else '.'
         )
 
         if target_path.is_dir():

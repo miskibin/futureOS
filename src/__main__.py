@@ -10,6 +10,7 @@ from rich.table import Table
 from constants import BASE_PATH
 import constants
 from init.create_collections import COMMANDS_COLLECTION, initialize_commands
+from utils.path_utils import resolve_path
 
 initialize_commands()
 
@@ -17,7 +18,7 @@ def get_prompt() -> str:
     """Generate the shell prompt string."""
     try:
         # Use CURRENT_DIRECTORY relative to BASE_PATH
-        path = str(constants.CURRENT_DIRECTORY).replace(str(BASE_PATH), "~")
+        path = str(constants.CURRENT_DIRECTORY).replace(str(BASE_PATH), "")
         return f"{path} $ "
     except Exception:
         return f"{constants.CURRENT_DIRECTORY} $ "
@@ -83,7 +84,7 @@ def main():
                 continue
 
             # Handle built-in commands
-            if command_name in ("exit", "quit"):
+            if command_name in ("exit", "q"):
                 console.print("Goodbye!", style="blue bold")
                 break
             elif command_name == "help":

@@ -1,22 +1,16 @@
 from itertools import chain
 from pathlib import Path
-from constants import CURRENT_DIRECTORY, BASE_PATH
+import constants
 
-
-def resolve_directory(directory: Path) -> Path:
-    """
-    Resolve the directory path, ensuring it is within the base path.
-    """
-    directory_str = str(directory)
-    if directory_str.startswith("\\") or directory_str.startswith("/"):
-        directory_str = directory_str.lstrip("\\").lstrip("/")
-    target_path = (CURRENT_DIRECTORY / directory_str).resolve()
-    if not str(target_path).lower().startswith(str(BASE_PATH).lower()):
-        raise Exception(
-            f"Access denied: Cannot access outside of base path {BASE_PATH}"
-        )
-    return target_path
-
+def resolve_path(path: Path) -> Path:
+    path_str = str(path)
+    if path_str.startswith(("/", "\\")):
+        path = path_str.lstrip("\\/")
+        return (constants.BASE_PATH / path).resolve()
+    if path_str.startswith("~"):
+        path = path_str.lstrip("~")
+        return (constants.BASE_PATH / "home" / path).resolve()
+    return (constants.CURRENT_DIRECTORY / path).resolve()
 
 def get_all_directories() -> dict[str, list[str]]:
     """
@@ -28,14 +22,21 @@ def get_all_directories() -> dict[str, list[str]]:
     """
     try:
         directories = {}
-        for p in chain(
-            [p for p in BASE_PATH.iterdir() if p.is_dir()], BASE_PATH.rglob("*/*")
-        ):
+        for p in constants.BASE_PATH.rglob("*"):
             if p.is_dir():
                 files = [f.name for f in p.iterdir() if f.is_file()]
-                directories[str(p.relative_to(BASE_PATH)).replace("\\", "/")] = files
+                directories[str(p.relative_to(constants.BASE_PATH)).replace("\\", "/")] = files
         return directories
-
     except Exception as e:
         print(f"Error reading directory structure: {e}")
         return {}
+
+def get_files_in_directory(directory: Path) -> list[Path]:
+    """
+    Get all files in the specified directory and its subdirectories.
+    """
+    return [
+        str(f).replace(str(constants.BASE_PATH), "")
+        for f in directory.rglob("*")
+        if f.is_file()
+    ]
