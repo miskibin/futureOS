@@ -1,82 +1,75 @@
+from abc import ABC, abstractmethod
+from typing import Optional, Any
 from pathlib import Path
-from typing import Any
+from langchain_core.prompts import ChatPromptTemplate
 from commands.command import Command
 import constants
-from utils.get_all_paths import (
-    get_all_paths,
-)  # Replace 'from constants import CURRENT_DIRECTORY, BASE_PATH'
+from utils.path_utils import resolve_directory, get_all_directories
 
 
 class ls(Command):
     """
-    NAME
+     NAME
         ls - list directory contents
 
     SYNOPSIS
         ls [directory]
         --graph (-g) Display all files in the file system
+        --query (-q) Natural language query
+
     DESCRIPTION
         List information about the files in the current directory.
         If a directory is specified, list contents of that directory.
+        Use --graph to show a visual representation of the file system.
 
     NATURAL LANGUAGE COMMANDS
         - Show files in directory X
         - List contents of folder X
+        - List all files in directory X
         - What is in directory X
+        - Display files in directory X
+        - Show what's in folder X
     """
 
     def _configure_parser(self) -> None:
         self.parser.add_argument(
-            "directory",
-            nargs="?",
-            type=Path,
-            help="Directory to list",
+            "directory", nargs="?", type=Path, help="Directory to list"
         )
         self.parser.add_argument(
-            "--graph",
-            "-g",
-            action="store_true",
-            help="Display all files in the file system",
+            "--graph", "-g", action="store_true", help="Display file system graph"
         )
-        self.parser.add_argument(
-            '--query',
-            '-q',
-            type=str,
-            help='Natural language query to filter paths'
-        )
-        
 
     def execute(self, args: Any) -> None:
-        try:
-            if args.query:
-                all_paths = get_all_paths()
-                context = "\n".join(all_paths)
-                prompt_template = (
-                    "Given the following list of file paths:\n"
-                    "{context}\n\n"
-                    "Answer the following question and provide only the relevant paths:\n"
-                    "{question}"
+        self.print(args, constants.CURRENT_DIRECTORY)
+        directory = args.directory
+        if args.query:
+            all_paths = get_all_directories()
+            context = "\n".join(
+                f"{d}: {', '.join(f)}" for d, f in all_paths.items()
+            )
+            prompt = (
+                "Given the directory list:\n{context}\n"
+                "Which directory is most relevant? Return only the path:\n{question}"
+            )
+            directory = self.run_nlp(context, args.query, prompt)
+            # if directory is file go to ../
+            if directory in all_paths:
+                directory = Path(directory)
+            else:
+                directory = Path(directory).parent
+            self.print(f"Found: directory: {directory}", style="green")
+
+        if args.graph:
+            for dir_path, files in get_all_directories().items():
+                self.print(
+                    f"[blue]{dir_path}[/blue]: [green]{', '.join(files)}[/green]"
                 )
-                result = self.run_nlp(context, args.query, prompt_template)
-                self.print(result)
-                return
+            return
+        target_path = resolve_directory(
+            directory if directory else constants.CURRENT_DIRECTORY
+        )
 
-            if args.graph:# ONLY FOR DEBUGGING
-                self.print("\n".join(get_all_paths()))
-                return
-            if not args.directory:
-                target_path = constants.CURRENT_DIRECTORY
-            else:
-                target_path = (constants.CURRENT_DIRECTORY / args.directory).resolve()
-
-            # Ensure the target path is within BASE_PATH
-            if not str(target_path).startswith(str(constants.BASE_PATH)):
-                raise Exception("Access denied: Cannot access outside of base path.")
-
-            if target_path.is_dir():
-                files = [f.name for f in target_path.iterdir()]
-                self.print("\n".join(files))
-            else:
-                self.print(f"Error: '{args.directory}' is not a directory", style="red")
-        except Exception as e:
-            self.print(f"Error: {str(e)}", style="red")
+        if target_path.is_dir():
+            self.print("\n".join(f.name for f in target_path.iterdir()))
+        else:
+            self.print(f"Error: Not a directory", style="red")

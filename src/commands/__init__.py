@@ -14,5 +14,5 @@ COMMAND_LIST = {
 def get_command(command_name: str):
     command = COMMAND_LIST.get(command_name)
     if command is None:
-        raise ValueError(f"Command '{command_name}' not found.")
+        return
     return command()

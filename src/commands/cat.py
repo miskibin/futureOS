@@ -6,19 +6,23 @@ import constants
 
 class cat(Command):
     """
-    NAME
-        cat - concatenate and print files
+   NAME
+        cat - concatenate and display files
 
     SYNOPSIS
         cat [file1] [file2] ...
 
     DESCRIPTION
-        Reads files sequentially and writes them to standard output.
-
+        Read files sequentially and write them to standard output.
+        When multiple files are specified, their contents are concatenated.
+        
     NATURAL LANGUAGE COMMANDS
         - Show the contents of file X
         - Display file X
         - Read file X
+        - Print file X contents
+        - Let me see what's in file X
+        - Show me file X
     """
 
     def _configure_parser(self) -> None:

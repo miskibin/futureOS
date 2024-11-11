@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any
 from commands.command import Command
 import constants
+from utils.path_utils import resolve_directory, get_all_directories
 
 
 class cd(Command):
@@ -21,6 +22,9 @@ class cd(Command):
         - Change directory to X
         - Go to folder X
         - Move to directory X
+        - Navigate to directory X
+        - Switch to directory X
+        - Take me to folder X
     """
 
     def _configure_parser(self) -> None:
@@ -34,16 +38,19 @@ class cd(Command):
 
     def execute(self, args: Any) -> None:
         try:
-            if args.directory == "~":
-                target_path = constants.BASE_PATH / Path("root")
-            else:
-                target_path = (
-                    constants.CURRENT_DIRECTORY / Path(args.directory)
-                ).resolve()
+            directory = args.directory
+            if args.query:
+                all_paths = get_all_directories()
+                context = "\n".join(f"{d}: {', '.join(f)}" for d, f in all_paths.items())
+                prompt = ("Given the directory list:\n{context}\n"
+                          "Which directory is most relevant? Return only the path:\n{question}")
+                directory = self.run_nlp(context, args.query, prompt)
+                self.print(f"Found: directory: {directory}", style="green")
 
-            # Ensure the target path is within BASE_PATH
-            if not str(target_path).startswith(str(constants.BASE_PATH)):
-                raise Exception("Access denied: Cannot navigate outside of base path.")
+            if directory == "~":
+                target_path = constants.BASE_PATH / Path("home")
+            else:
+                target_path = resolve_directory(directory)
 
             if target_path.is_dir():
                 constants.CURRENT_DIRECTORY = target_path
