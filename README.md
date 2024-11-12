@@ -2,6 +2,10 @@
 
 futureOS is a command-line interface (CLI) tool for managing and executing various shell commands with enhanced features. It leverages advanced libraries like `chromadb`, `langchain`, and `rich` to provide a powerful and user-friendly experience.
 
+![image](https://github.com/user-attachments/assets/d22be02b-33d5-4c18-a516-05e6bc3715c7)
+![image](https://github.com/user-attachments/assets/f96f1e3d-baed-42e0-b647-289e7e0d77d4)
+
+
 ## Features
 
 - Execute shell commands with natural language queries.
