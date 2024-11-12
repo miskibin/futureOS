@@ -16,6 +16,7 @@ class pwd(Command):
         contents.
 
     NATURAL LANGUAGE COMMANDS
+        - where am i? 
         - What is the full path to my current directory?
         - Show me the absolute path of where I am
         - What is my current directory path?
