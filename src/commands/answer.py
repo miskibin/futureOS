@@ -23,27 +23,27 @@ class answer(Command):
             self.print("Please provide a question to answer", style="red")
             return
         question = args.query
-        filename = self.get_file(question)
+        filename = self.get_file(question, max_distance=1.7)
+        if not filename:
+            return
         resolved_path = resolve_path(filename)
-        if resolved_path.is_file():
-            try:
-                with open(resolved_path, "r") as file:
-                    file_content = file.read()
-                    prompt = (
-                        "Given the file content:\n{file_content}\n"
-                        "Answer the following question:\n{question}"
+        try:
+            with open(resolved_path, "r") as file:
+                file_content = file.read()
+                prompt = (
+                    "Basing on best matched file content:\n{file_content}\n\n"
+                    "Answer the following question:\n{question}"
+                )
+                messages = (
+                    ChatPromptTemplate(
+                        [("system", self.system_template), ("user", prompt)]
                     )
-                    messages = (
-                        ChatPromptTemplate(
-                            [("system", self.system_template), ("user", prompt)]
-                        )
-                        | self.model
-                    )
-                    answer = self.run_chain(
-                        messages, {"question": question, "file_content": file_content}
-                    )
-                    self.print(f"Answer: {answer}", style="green")
-            except Exception as e:
-                self.print(f"Error reading {filename}: {str(e)}", style="red")
-        else:
-            self.print(f"'{resolved_path}' is not a file", style="red")
+                    | self.model
+                )
+                self.run_chain(
+                    messages,
+                    {"question": question, "file_content": file_content},
+                    stream=True,
+                )
+        except Exception as e:
+            self.print(f"Error reading {filename}: {str(e)}", style="red")

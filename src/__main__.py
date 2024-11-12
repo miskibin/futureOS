@@ -1,8 +1,10 @@
+import os
 import shlex
 from pathlib import Path
+import sys
 from typing import Optional
 from utils.console_manager import future_console as console
-from constants import BASE_PATH, CURRENT_DIRECTORY
+import constants
 from commands import answer, get_command, COMMAND_LIST
 from init.create_collections import (
     COMMANDS_COLLECTION,
@@ -14,12 +16,12 @@ from init.create_collections import (
 def get_prompt() -> str:
     """Generate the shell prompt string."""
     try:
-        path = str(CURRENT_DIRECTORY).replace(str(BASE_PATH), "")
-        username = "user"  # You could make this dynamic
+        path = str(constants.CURRENT_DIRECTORY).lower().replace(str(constants.BASE_PATH).lower(), "")
+        username = os.getlogin()
         hostname = "futureOS"  # You could make this dynamic
         return f"[user]{username}[/user]@[system]{hostname}[/system] [path]{path}[/path] $ "
     except Exception:
-        return f"[path]{CURRENT_DIRECTORY}[/path] $ "
+        return f"[path]{constants.CURRENT_DIRECTORY}[/path] $ "
 
 
 def show_help(command: Optional[str] = None) -> None:

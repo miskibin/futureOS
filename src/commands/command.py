@@ -46,17 +46,32 @@ class Command(ABC):
     def print(self, message: str, style: Optional[str] = None) -> None:
         console.print(message, style=style)
 
-    def get_file(self, question: str) -> str:
+    def get_file(self, question: str, max_distance=2.0) -> str:
         with console.status("Searching for the file..."):
             results = FILES_COLLECTION.query(query_texts=[question], n_results=1)
         filename = results["ids"][0][0]
         self.print(f"Best match: {filename}", style="green")
+        if results["distances"][0][0] > max_distance:
+            self.print(
+                f"I did not find a good match for the question in the files {results['distances'][0][0]:.2f}",
+                style="yellow",
+            )
+            return
         return filename
 
-    def run_chain(self, chain: RunnablePassthrough, input: dict) -> Any:
-        with console.status(f"Running the model..." ):
-            result = chain.invoke(input=input)
-        return result
+    def run_chain(
+        self, chain: RunnablePassthrough, input: dict, stream: bool = False
+    ) -> Any:
+        with console.status("Running the model..."):
+            if stream:
+                result = ""
+                for chunk in chain.stream(input=input):
+                    result += chunk
+                    print(chunk, end="")
+                return result
+            else:
+                result = chain.invoke(input=input)
+                return result
 
     def __call__(self, *args: Any, **kwargs: Any) -> None:
         self.execute(self.parser.parse_args(*args))
