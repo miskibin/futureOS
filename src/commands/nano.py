@@ -1,12 +1,13 @@
 from typing import Any
 from pathlib import Path
 import platform
+import os
 from rich.live import Live
 from rich.text import Text
 from rich.panel import Panel
 from commands.command import Command
-from utils.path_utils import resolve_path, get_files_in_directory
-import constants
+from utils.path_utils import resolve_path
+from langchain_core.prompts import ChatPromptTemplate
 
 
 class nano(Command):
@@ -35,36 +36,55 @@ class nano(Command):
         """Get a single keypress."""
         if platform.system() == "Windows":
             import msvcrt
-
-            char = msvcrt.getch()
-            try:
-                return char.decode("utf-8")
-            except UnicodeDecodeError:
-                if char == b"\xe0":  # Arrow keys
+            while True:
+                if msvcrt.kbhit():
                     char = msvcrt.getch()
-                    return {b"H": "up", b"P": "down", b"K": "left", b"M": "right"}.get(
-                        char, ""
-                    )
-                return ""
+                    # Handle special keys
+                    if char in (b'\x00', b'\xe0'):  # Arrow keys
+                        char = msvcrt.getch()
+                        return {
+                            b'H': 'up',
+                            b'P': 'down',
+                            b'K': 'left',
+                            b'M': 'right'
+                        }.get(char, '')
+                    # Handle control keys
+                    try:
+                        char = char.decode('utf-8')
+                    except:
+                        return ''
+                    return char
         else:
             import sys, tty, termios
-
             fd = sys.stdin.fileno()
             old = termios.tcgetattr(fd)
             try:
                 tty.setraw(fd)
                 char = sys.stdin.read(1)
-                if char == "\x1b":
-                    char = sys.stdin.read(2)
-                    return {"[A": "up", "[B": "down", "[C": "right", "[D": "left"}.get(
-                        char, ""
-                    )
+                if char == '\x1b':
+                    next_char = sys.stdin.read(1)
+                    if next_char == '[':
+                        code = sys.stdin.read(1)
+                        return {
+                            'A': 'up',
+                            'B': 'down',
+                            'C': 'right',
+                            'D': 'left'
+                        }.get(code, '')
                 return char
             finally:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
+    def generate_filename(self, content: str) -> str:
+        """Generate filename using LLM based on content."""
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", "Generate a short filename with .txt extension based on content. Use lowercase letters, numbers, underscores only. Just return filename."),
+            ("user", "Content:\n{content}\nGenerate filename:")
+        ])
+        chain = prompt | self.model
+        return self.run_chain(chain, {"content": content[:500]})
+
     def edit_file(self, file_path: Path) -> None:
-        # Load file content
         content = []
         if file_path.exists():
             with open(file_path, "r", encoding="utf-8") as f:
@@ -78,7 +98,6 @@ class nano(Command):
 
         def render() -> Panel:
             display = Text()
-            # Show content and cursor
             for i, line in enumerate(content):
                 if i == cursor_y:
                     display.append(line[:cursor_x], style="white")
@@ -92,46 +111,47 @@ class nano(Command):
             if message:
                 status = message + " | " + status
 
-            display.append("\n^X Exit | ^S Save", style="black on white")
-            return Panel(
-                display, title=str(file_path), subtitle=status, border_style="blue"
-            )
+            display.append("\n^X Exit | ^S Save | ^A AI filename", style="black on white")
+            return Panel(display, title=str(file_path), subtitle=status, border_style="blue")
 
         with Live(render(), refresh_per_second=10, screen=True) as live:
             while True:
                 try:
                     char = self.get_key()
 
-                    # Handle cursor movement
-                    if char == "left" and cursor_x > 0:
-                        cursor_x -= 1
-                    elif char == "right" and cursor_x < len(content[cursor_y]):
-                        cursor_x += 1
-                    elif char == "up" and cursor_y > 0:
-                        cursor_y -= 1
-                        cursor_x = min(cursor_x, len(content[cursor_y]))
-                    elif char == "down" and cursor_y < len(content) - 1:
-                        cursor_y += 1
-                        cursor_x = min(cursor_x, len(content[cursor_y]))
-
-                    # Handle control keys
-                    elif char in ("\x18", "\x03"):  # Ctrl+X or Ctrl+C
+                    if char == '\x18':  # Ctrl+X
                         if not saved:
                             message = "Save? (Y/N)"
                             live.update(render())
-                            if self.get_key().lower() == "y":
+                            if self.get_key().lower() == 'y':
                                 with open(file_path, "w", encoding="utf-8") as f:
                                     f.write("\n".join(content))
                         break
 
-                    elif char == "\x13":  # Ctrl+S
+                    elif char == '\x13':  # Ctrl+S
                         with open(file_path, "w", encoding="utf-8") as f:
                             f.write("\n".join(content))
                         saved = True
                         message = "Saved"
 
-                    # Handle text editing
-                    elif char in ("\r", "\n"):  # Enter
+                    elif char == '\x01':  # Ctrl+A
+                        new_filename = self.generate_filename("\n".join(content))
+                        file_path = resolve_path(new_filename.strip())
+                        message = f"New filename: {file_path}"
+
+                    elif char in ('left', 'right', 'up', 'down'):
+                        if char == 'left' and cursor_x > 0:
+                            cursor_x -= 1
+                        elif char == 'right' and cursor_x < len(content[cursor_y]):
+                            cursor_x += 1
+                        elif char == 'up' and cursor_y > 0:
+                            cursor_y -= 1
+                            cursor_x = min(cursor_x, len(content[cursor_y]))
+                        elif char == 'down' and cursor_y < len(content) - 1:
+                            cursor_y += 1
+                            cursor_x = min(cursor_x, len(content[cursor_y]))
+
+                    elif char in ('\r', '\n'):  # Enter
                         line = content[cursor_y]
                         content[cursor_y] = line[:cursor_x]
                         content.insert(cursor_y + 1, line[cursor_x:])
@@ -139,10 +159,10 @@ class nano(Command):
                         cursor_x = 0
                         saved = False
 
-                    elif char in ("\x7f", "\x08"):  # Backspace
+                    elif char in ('\x7f', '\x08'):  # Backspace
                         if cursor_x > 0:
                             line = content[cursor_y]
-                            content[cursor_y] = line[: cursor_x - 1] + line[cursor_x:]
+                            content[cursor_y] = line[:cursor_x - 1] + line[cursor_x:]
                             cursor_x -= 1
                             saved = False
                         elif cursor_y > 0:
@@ -152,7 +172,7 @@ class nano(Command):
                             cursor_y -= 1
                             saved = False
 
-                    elif char and char.isprintable():  # Regular characters
+                    elif char and char.isprintable():
                         line = content[cursor_y]
                         content[cursor_y] = line[:cursor_x] + char + line[cursor_x:]
                         cursor_x += 1
@@ -166,21 +186,10 @@ class nano(Command):
                     live.update(render())
 
     def execute(self, args: Any) -> None:
+        file_path = resolve_path(args.file or "untitled.txt")
         if args.query:
-            # files = get_files_in_directory(constants.CURRENT_DIRECTORY)
-            # context = "\n".join(f"- {f}" for f in files)
-            # prompt = (
-            #     "Given these files:\n"
-            #     "{context}\n\n"
-            #     "Find file for: {question}\n"
-            #     "RESPOND WITH ONLY THE FULL PATH. NO EXPLANATIONS OR QUOTES:"
-            # )
-            # result = self.run_nlp(context, args.query, prompt).strip()
-            # filename = result.split("\n")[0].replace("`", "").strip("'\" ").split()[0]
-            filename = self.get_file(args.query)
-            self.print(f"Opening: {filename}", style="green")
-            file_path = resolve_path(filename)
-        else:
-            file_path = resolve_path(args.file or "untitled.txt")
-
+            filename = self.get_file(args.query, max_distance=1.6)
+            if filename:
+                self.print(f"Opening: {filename}", style="green")
+                file_path = resolve_path(filename)
         self.edit_file(file_path)
