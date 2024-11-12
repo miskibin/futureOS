@@ -1,40 +1,33 @@
 import os
 import shlex
+import sys
 from pathlib import Path
 from typing import List, Optional
-from commands import get_command, COMMAND_LIST
-from commands.command import Command
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
-from constants import BASE_PATH
-import constants
+from constants import BASE_PATH, CURRENT_DIRECTORY
+from commands import get_command, COMMAND_LIST
 from init.create_collections import COMMANDS_COLLECTION, initialize_commands
-from utils.path_utils import resolve_path
 
-initialize_commands()
+console = Console()  # Global console instance
+
 
 def get_prompt() -> str:
     """Generate the shell prompt string."""
     try:
-        # Use CURRENT_DIRECTORY relative to BASE_PATH
-        path = str(constants.CURRENT_DIRECTORY).replace(str(BASE_PATH), "")
+        path = str(CURRENT_DIRECTORY).replace(str(BASE_PATH), "")
         return f"{path} $ "
     except Exception:
-        return f"{constants.CURRENT_DIRECTORY} $ "
+        return f"{CURRENT_DIRECTORY} $ "
 
 
-def show_help(args: Optional[List[str]] = None) -> None:
+def show_help(command: Optional[str] = None) -> None:
     """Show help for all commands or a specific command."""
-    console = Console()
-
-    if args and args[0] in COMMAND_LIST:
-        # Show help for specific command
-        command = get_command(args[0])
-        command(["--help"])
+    if command and command in COMMAND_LIST:
+        get_command(command)(["--help"])
         return
 
-    # Show general help
     table = Table(title="Available Commands")
     table.add_column("Command", style="cyan")
     table.add_column("Description", style="green")
@@ -43,76 +36,82 @@ def show_help(args: Optional[List[str]] = None) -> None:
     table.add_row("help", "Show this help message")
     table.add_row("exit/quit", "Exit the shell")
 
-    # Add all registered commands
+    # Add registered commands
     for cmd_name, cmd_class in sorted(COMMAND_LIST.items()):
-        doc = cmd_class.__doc__ or ""
-        description = next(
+        desc = next(
             (
                 line.strip()
-                for line in doc.split("\n")
+                for line in (cmd_class.__doc__ or "").split("\n")
                 if line.strip() and not line.strip().startswith("NAME")
             ),
             "No description available",
         )
-        table.add_row(cmd_name, description)
+        table.add_row(cmd_name, desc)
 
     console.print(table)
 
+def execute_command(command_name: str, args: List[str]) -> None:
+    """Execute a command with given arguments."""
+    command = get_command(command_name)
+    if not command:  # Run AI command search
+        cmd_id = None
+        with console.status("Finding best command match..."):
+            results = COMMANDS_COLLECTION.query(
+                query_texts=f"{command_name} {' '.join(args)}", 
+                n_results=1
+            )
+            cmd_id = results["ids"][0][0]
+            command = get_command(cmd_id)
+        
+        # Execute command without status message for editor
+        command(["-q", f"'{command_name} {' '.join(args)}'"])
+    else:
+        command(args)
+
+
+def cleanup_and_exit():
+    """Clean up resources and exit properly."""
+    console.print("\nGoodbye!", style="blue bold")
+    console.clear()
+    sys.exit(0)
+
 
 def main():
-    console = Console()
+    initialize_commands()
+    console.print("Type 'help' for available commands", style="blue")
 
-    # Show welcome message
-    console.print("Type 'help' for a list of commands", style="blue")
-
-    # Main shell loop
     while True:
         try:
-            # Get command from user
             command_line = Prompt.ask(get_prompt())
-            # Handle empty input
+
             if not command_line.strip():
                 continue
 
-            # Parse command and arguments
             try:
                 parts = shlex.split(command_line)
                 command_name = parts[0].lower()
                 args = parts[1:]
-            except ValueError as e:
-                console.print(f"Error: Invalid command syntax: {e}", style="red")
-                continue
 
-            # Handle built-in commands
-            if command_name in ("exit", "q"):
-                console.print("Goodbye!", style="blue bold")
-                break
-            elif command_name == "help":
-                show_help(args if args else None)
-                continue
-
-            # Get and execute command
-            try:
-                command = get_command(command_name)
-                if command is None: # run ai command
-                    with console.status("Finding the best command for you..."):
-                        
-                        res = COMMANDS_COLLECTION.query(query_texts=command_line, n_results=1)
-                    with console.status(f"Running command: {res["ids"][0][0]}"):
-                        command = get_command(res["ids"][0][0])
-                    command(["-q", f"'{command_line}'"])
+                if command_name in ("exit", "quit", "q"):
+                    cleanup_and_exit()
+                elif command_name == "help":
+                    show_help(args[0] if args else None)
                 else:
-                    command(args)
+                    execute_command(command_name, args)
+
             except ValueError as e:
-                console.print(f"Error: Unknown command: '{command_name}'", style="red")
+                console.print(f"Error: Invalid syntax: {e}", style="red")
             except Exception as e:
-                console.print(f"Error executing command: {str(e)}", style="red")
+                console.print(f"Error: {str(e)}", style="red")
 
         except KeyboardInterrupt:
-            console.print("\nUse 'exit' or 'quit' to exit the shell", style="yellow")
+            cleanup_and_exit()
         except Exception as e:
             console.print(f"\nUnexpected error: {str(e)}", style="red bold")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        cleanup_and_exit()

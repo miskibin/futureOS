@@ -40,10 +40,11 @@ class Command(ABC):
         self.console.print(message, style=style)
 
     def run_nlp(self, context: str, question: str, prompt: str) -> str:
-        with Status("[blue]Processing...", console=self.console):
-            model = OllamaLLM(model="llama3.2", max_length=40, temperature=0.2)
-            chain = ChatPromptTemplate.from_template(prompt) | model
-            return chain.invoke({"question": question, "context": context})
+        model = OllamaLLM(model="llama3.2:1b", max_length=40, temperature=0.2)
+        chain = ChatPromptTemplate.from_template(prompt) | model
+        # show full prompt
+        self.print(f"\n\n{prompt.format(context=context, question=question)}\n")
+        return chain.invoke({"question": question, "context": context})
 
     def __call__(self, *args: Any, **kwargs: Any) -> None:
         self.execute(self.parser.parse_args(*args))

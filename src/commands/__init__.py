@@ -2,12 +2,14 @@ from .ls import ls
 from .pwd import pwd
 from .cd import cd
 from .cat import cat
+from .nano import nano
 
 COMMAND_LIST = {
     "pwd": pwd,
     "cd": cd,
     "ls": ls,
     "cat": cat,
+    "nano": nano,
 }
 
 

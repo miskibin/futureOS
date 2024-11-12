@@ -41,7 +41,7 @@ class cat(Command):
                 "ONE valid path without explanation: "
             )
             filename = self.run_nlp(context, args.query, prompt)
-
+            filename = filename.replace("'", "").replace('"', "")
             self.print(f"Found: filename: {filename}", style="green")
         files = [filename] if filename else args.files
         for file_path in files:

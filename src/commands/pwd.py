@@ -18,11 +18,9 @@ class pwd(Command):
 
     NATURAL LANGUAGE COMMANDS
         - Where am I?
-        - Show my current directory
         - Display current location
         - What folder am I in?
         - Print current directory path
-        - What is my current directory?
     """
 
     def _configure_parser(self) -> None:

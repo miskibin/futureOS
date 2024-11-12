@@ -2,15 +2,17 @@ from itertools import chain
 from pathlib import Path
 import constants
 
+
 def resolve_path(path: Path) -> Path:
-    path_str = str(path)
-    if path_str.startswith(("/", "\\")):
-        path = path_str.lstrip("\\/")
-        return (constants.BASE_PATH / path).resolve()
+    path_str = str(path).replace("\\", "/").strip()
+    if path_str.startswith("/"):
+        path = path_str.lstrip("/")
+        return (Path(constants.BASE_PATH) / Path(path)).resolve()
     if path_str.startswith("~"):
         path = path_str.lstrip("~")
         return (constants.BASE_PATH / "home" / path).resolve()
     return (constants.CURRENT_DIRECTORY / path).resolve()
+
 
 def get_all_directories() -> dict[str, list[str]]:
     """
@@ -25,18 +27,21 @@ def get_all_directories() -> dict[str, list[str]]:
         for p in constants.BASE_PATH.rglob("*"):
             if p.is_dir():
                 files = [f.name for f in p.iterdir() if f.is_file()]
-                directories[str(p.relative_to(constants.BASE_PATH)).replace("\\", "/")] = files
+                directories[
+                    str(p.relative_to(constants.BASE_PATH)).replace("\\", "/")
+                ] = files
         return directories
     except Exception as e:
         print(f"Error reading directory structure: {e}")
         return {}
+
 
 def get_files_in_directory(directory: Path) -> list[Path]:
     """
     Get all files in the specified directory and its subdirectories.
     """
     return [
-        str(f).replace(str(constants.BASE_PATH), "")
+        str(f).lower().replace(str(constants.BASE_PATH.resolve()).lower(), "")
         for f in directory.rglob("*")
         if f.is_file()
     ]

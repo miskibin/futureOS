@@ -29,6 +29,8 @@ class ls(Command):
         - What is in directory X
         - Display files in directory X
         - Show what's in folder X
+        - what is in current dir
+        - what is in this dir
     """
 
     def _configure_parser(self) -> None:
@@ -48,6 +50,7 @@ class ls(Command):
             )
             prompt = (
                 "Given the directory list:\n{context}\n"
+                "You can use . if you want to list the current directory\n"
                 "Which directory is most relevant? Return only the path:\n{question}"
             )
             directory = self.run_nlp(context, args.query, prompt)

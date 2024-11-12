@@ -21,6 +21,7 @@ class cd(Command):
     NATURAL LANGUAGE COMMANDS
         - Change directory to X
         - Go to folder X
+        - go to the X dir
         - Move to directory X
         - Navigate to directory X
         - Switch to directory X
@@ -41,12 +42,20 @@ class cd(Command):
             directory = args.directory
             if args.query:
                 all_paths = get_all_directories()
-                context = "\n".join(f"{d}: files: {', '.join(f)}" for d, f in all_paths.items())
-                prompt = ("Given the directory list:\n{context}\n"
-                          "Which directory is most relevant? Return only the path:\n{question}"
-                          "Path from the list WITHOUT ANY EXPLANATION:")
+                context = "\n".join(
+                    f"Directory: /{d}: content: {', '.join(f)}"
+                    for d, f in all_paths.items()
+                )
+                prompt = (
+                    f"Given the directory list:\n{context}\n"
+                    "Which directory is most relevant to the question?\n{question}\n"
+                    "Relevant path FROM THE LIST without explanation, ONLY THE PATH:"
+                )
                 directory = self.run_nlp(context, args.query, prompt)
-                self.print(f"Found: directory: {directory}", style="green")
+                directory = directory.replace("'", "").replace('"', "")
+                self.print(f"\nFound directory: {directory}", style="green")
+                if Path(directory).is_file():
+                    directory = Path(directory).parent.resolve()
 
             if directory == "~":
                 target_path = constants.BASE_PATH / Path("home")
