@@ -43,6 +43,11 @@ $ /home $ cat /home/finances.csv
 # Displays the content of the file 'finances.csv'
 ```
 
+### Test results
+
+![image](https://github.com/user-attachments/assets/07b223fe-5d99-439f-9d23-178ae7ec39fe)
+
+
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.
