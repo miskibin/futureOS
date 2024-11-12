@@ -31,7 +31,7 @@ class Command(ABC):
         cls.model = OllamaLLM(
             # model="llama3.2",
             model="gemma2:2b",
-            max_length=100,  # Shorter responses
+            num_predict=48,
             top_p=0.95,  # High top_p for more focused responses
         )
         return cls._instance
