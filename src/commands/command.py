@@ -5,7 +5,7 @@ from rich.console import Console
 from rich.status import Status
 from typing import Optional, Any
 from langchain_core.prompts import ChatPromptTemplate
-
+from utils.console_manager import future_console as console
 from init.create_collections import FILES_COLLECTION
 
 
@@ -13,7 +13,6 @@ class Command(ABC):
     """Base class for all shell commands."""
 
     _instance = None
-    console = Console()
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -39,10 +38,10 @@ class Command(ABC):
         pass
 
     def print(self, message: str, style: Optional[str] = None) -> None:
-        self.console.print(message, style=style)
+        console.print(message, style=style)
 
     def get_file(self, question: str) -> str:
-        with self.console.status("Searching for the file..."):
+        with console.status("Searching for the file..."):
             results = FILES_COLLECTION.query(query_texts=[question], n_results=1)
         filename = results["ids"][0][0]
         self.print(f"Best match: {filename}", style="green")
@@ -53,7 +52,7 @@ class Command(ABC):
         chain = ChatPromptTemplate.from_template(prompt) | model
         # show full prompt
         # self.print(f"\n\n{prompt.format(context=context, question=question)}\n")
-        with self.console.status("Processing natural language query..."):
+        with console.status("Processing natural language query..."):
             result = chain.invoke({"question": question, "context": context})
         return result
 

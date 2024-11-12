@@ -5,7 +5,7 @@ from .cat import cat
 from .nano import nano
 from .index import index
 COMMAND_LIST = {
-    # "pwd": pwd,
+    "pwd": pwd,
     "cd": cd,
     "ls": ls,
     "cat": cat,

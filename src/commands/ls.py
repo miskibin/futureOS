@@ -9,24 +9,20 @@ from utils.path_utils import get_all_directories, resolve_path
 
 class ls(Command):
     """
-     NAME
-        ls - list directory contents
-    DESCRIPTION
-        List information about the files in the current directory.
-        If a directory is specified, list contents of that directory.
-        Use --graph to show a visual representation of the file system.
-    NATURAL LANGUAGE COMMANDS
-        - Show files in directory X
-        - List contents of folder X
-        - List all files in directory X
-        - What is in directory X
-        - Display files in directory X
-        - Show what's in folder X
-        - What is in the current directory?
-        - What is in this directory?
-        - List all items in directory X
-        - Show me the files in directory X
+    ls: list directory contents
+
+    DIRECTORY TERMS:
+    list-files show-files directory-contents folder-contents list-directory
+    file-list folder-list directory-items folder-items list-contents
+
+    FILE LISTING PATTERNS:
+    files-in-X contents-of-X items-in-X files-here list-everything
+    show-files display-files what-files list-files show-contents
+
+    RETURNS: list of files and folders only
+    NOT FOR: file contents, file paths, file editing
     """
+
 
     def _configure_parser(self) -> None:
         self.parser.add_argument(
@@ -48,11 +44,15 @@ class ls(Command):
             )
             directory = self.run_nlp(context, args.query, prompt)
             # if directory is file go to ../
+            # clean ooutput try to get first word that has `<name>` or '<name>'
+            if directory.find("`") != -1:
+                directory = directory.split("`")[1].split("`")[0]
+
             if directory in all_paths:
                 directory = Path(directory)
             else:
                 directory = Path(directory).parent
-            self.print(f"Found: directory: {directory}", style="green")
+            self.print(f"Found directory: {directory}", style="green")
 
         if args.graph:
             for dir_path, files in get_all_directories().items():
@@ -65,4 +65,4 @@ class ls(Command):
         if target_path.is_dir():
             self.print("\n".join(f.name for f in target_path.iterdir()))
         else:
-            self.print(f"Error: Not a directory", style="red")
+            self.print(f"Error: {target_path} Not a directory", style="red")

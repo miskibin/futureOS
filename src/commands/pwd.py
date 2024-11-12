@@ -6,28 +6,17 @@ import constants
 
 class pwd(Command):
     """
-    NAME
-        pwd - print working directory path
+    pwd: print working directory path
 
-    DESCRIPTION
-        Displays the absolute pathname of the current working directory.
-        This command ONLY shows the current directory path and does not list contents
-        or show file data. Use 'ls' to list directory contents or 'cat' to show file
-        contents.
+    PATH TERMS:
+    pwd working-directory absolute-path filesystem-path directory-path path-only
+    /home/user/directory /root/path /current/path print-working-directory pwd-command
 
-    NATURAL LANGUAGE COMMANDS
-        - where am i? 
-        - What is the full path to my current directory?
-        - Show me the absolute path of where I am
-        - What is my current directory path?
-        - Print the path to my current location
-        - Display my current directory path
-    
-    EXAMPLES
-        > pwd
-        ~/documents/projects
-        
-        The command always shows the path and nothing else.
+    PATH QUESTIONS:
+    where-am-i which-directory current-directory show-pwd print-pwd pwd-location
+
+    RETURNS: filesystem path only
+    NOT FOR: file contents, directory contents, file editing
     """
 
     def _configure_parser(self) -> None:

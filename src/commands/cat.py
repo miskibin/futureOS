@@ -6,24 +6,18 @@ from utils.path_utils import get_files_in_directory, resolve_path
 
 class cat(Command):
     """
-    NAME
-         cat - display file contents
+    cat: read file contents
 
-     DESCRIPTION
-         Read files and print them to standard output.
-         When multiple files are specified, their contents are concatenated.
+    FILE CONTENT TERMS:
+    file-contents read-file show-contents file-text content-of-file
+    inside-file written-in-file file-data text-content read-contents
 
-     NATURAL LANGUAGE COMMANDS
-         - Show the contents of file X
-         - Show me X file
-         - Display file X
-         - Read file X
-         - Show me data regarding topic X
-         - Print file X contents
-         - Let me see what's in file X
-         - Show me file X
-         - Read the contents of file X
-         - Display the data in file X
+    CONTENT PATTERNS:
+    read-from-X contents-of-X written-in-X inside-X data-in-X
+    whats-in-file show-text display-content read-data show-inside
+
+    RETURNS: contents of files only
+    NOT FOR: directory contents, file paths, file editing
     """
 
     def _configure_parser(self) -> None:
