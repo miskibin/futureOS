@@ -23,7 +23,6 @@ class ls(Command):
     NOT FOR: file contents, file paths, file editing
     """
 
-
     def _configure_parser(self) -> None:
         self.parser.add_argument(
             "directory", nargs="?", type=Path, help="Directory to list"
@@ -42,9 +41,10 @@ class ls(Command):
                 "You can use . if you want to list the current directory\n"
                 "Which directory is most relevant? Return only the path:\n{question}"
             )
-            directory = self.run_nlp(context, args.query, prompt)
-            # if directory is file go to ../
-            # clean ooutput try to get first word that has `<name>` or '<name>'
+            lanchain_prompt = ChatPromptTemplate.from_template(prompt) | self.model
+            directory = self.run_chain(
+                lanchain_prompt, {"question": args.query, "context": context}
+            )
             if directory.find("`") != -1:
                 directory = directory.split("`")[1].split("`")[0]
 
@@ -52,7 +52,7 @@ class ls(Command):
                 directory = Path(directory)
             else:
                 directory = Path(directory).parent
-            self.print(f"Found directory: {directory}", style="green")
+            self.print(f"listing: {directory}", style="green")
 
         if args.graph:
             for dir_path, files in get_all_directories().items():

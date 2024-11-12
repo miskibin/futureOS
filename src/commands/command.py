@@ -7,6 +7,7 @@ from typing import Optional, Any
 from langchain_core.prompts import ChatPromptTemplate
 from utils.console_manager import future_console as console
 from init.create_collections import FILES_COLLECTION
+from langchain_core.runnables import RunnablePassthrough
 
 
 class Command(ABC):
@@ -27,9 +28,14 @@ class Command(ABC):
                 help="Natural language query to run the command",
             )
             cls._instance._configure_parser()
+        cls.model = OllamaLLM(
+            # model="llama3.2",
+            model="gemma2:2b",
+            max_length=100,  # Shorter responses
+            top_p=0.95,  # High top_p for more focused responses
+        )
         return cls._instance
 
-    @abstractmethod
     def _configure_parser(self) -> None:
         pass
 
@@ -47,15 +53,10 @@ class Command(ABC):
         self.print(f"Best match: {filename}", style="green")
         return filename
 
-    def run_nlp(self, context: str, question: str, prompt: str) -> str:
-        model = OllamaLLM(model="llama3.2:1b", max_length=40, temperature=0.2)
-        chain = ChatPromptTemplate.from_template(prompt) | model
-        # show full prompt
-        # self.print(f"\n\n{prompt.format(context=context, question=question)}\n")
-        with console.status("Processing natural language query..."):
-            result = chain.invoke({"question": question, "context": context})
+    def run_chain(self, chain: RunnablePassthrough, input: dict) -> Any:
+        with console.status(f"Running the model..." ):
+            result = chain.invoke(input=input)
         return result
 
     def __call__(self, *args: Any, **kwargs: Any) -> None:
         self.execute(self.parser.parse_args(*args))
-

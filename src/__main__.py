@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 from utils.console_manager import future_console as console
 from constants import BASE_PATH, CURRENT_DIRECTORY
-from commands import get_command, COMMAND_LIST
+from commands import answer, get_command, COMMAND_LIST
 from init.create_collections import (
     COMMANDS_COLLECTION,
     initialize_commands,
@@ -74,8 +74,9 @@ def execute_command(command_line: str) -> None:
         command = get_command(cmd_id)
 
         if results["distances"][0][0] > 1.7:
-            console.error("I don't think I can help you with that command.")
-            console.info("Try 'help' to see available commands.")
+            get_command("answer")(["-q", command_line])
+            # console.error("I don't think I can help you with that command.")
+            # console.info("Try 'help' to see available commands.")
         else:
             command(["-q", command_line])
     except ValueError as e:

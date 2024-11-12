@@ -4,6 +4,7 @@ from typing import Any
 from commands.command import Command
 import constants
 from utils.path_utils import resolve_path, get_all_directories
+from langchain_core.prompts import PromptTemplate
 
 
 class cd(Command):
@@ -46,14 +47,20 @@ class cd(Command):
                     f"Directory: /{d}: content: {', '.join(f)}"
                     for d, f in all_paths.items()
                 )
-                prompt = (
-                    f"Given the directory list:\n{context}\n"
-                    "Which directory is most relevant to the question?\n{question}\n"
-                    "Relevant path FROM THE LIST without explanation, ONLY THE PATH:"
+                chain = (
+                    PromptTemplate.from_template(
+                        "Given the directory list:\n{context}\n"
+                        "Which directory is most relevant to the question?\n{question}\n"
+                        "Relevant path FROM THE LIST without explanation, ONLY THE PATH:"
+                    )
+                    | self.model
                 )
-                directory = self.run_nlp(context, args.query, prompt)
+
+                directory = self.run_chain(
+                    chain, {"question": args.query, "context": context}
+                )
                 directory = directory.replace("'", "").replace('"', "")
-                self.print(f"\nFound directory: {directory}", style="green")
+                self.print(f"\nGoing to: {directory}", style="green")
                 if Path(directory).is_file():
                     directory = Path(directory).parent.resolve()
 
