@@ -222,3 +222,6 @@ def test_all_commands_with_summary(capsys):
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
+# how to add src to path in windows
+# $env:PYTHONPATH += ";E:\FutureOS\futureOS\src"
