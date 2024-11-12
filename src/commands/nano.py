@@ -167,21 +167,18 @@ class nano(Command):
 
     def execute(self, args: Any) -> None:
         if args.query:
-            files = get_files_in_directory(constants.CURRENT_DIRECTORY)
-            context = "\n".join(f"- {f}" for f in files)
-            prompt = (
-                "Given these files:\n"
-                "{context}\n\n"
-                "Find file for: {question}\n"
-                "RESPOND WITH ONLY THE FULL PATH. NO EXPLANATIONS OR QUOTES:"
-            )
-            result = self.run_nlp(context, args.query, prompt).strip()
-            filename = result.split("\n")[0].replace("`", "").strip("'\" ").split()[0]
-
-            if filename in files:
-                self.print(f"Opening: {filename}", style="green")
-            else:
-                self.print(f"Creating: {filename}", style="yellow")
+            # files = get_files_in_directory(constants.CURRENT_DIRECTORY)
+            # context = "\n".join(f"- {f}" for f in files)
+            # prompt = (
+            #     "Given these files:\n"
+            #     "{context}\n\n"
+            #     "Find file for: {question}\n"
+            #     "RESPOND WITH ONLY THE FULL PATH. NO EXPLANATIONS OR QUOTES:"
+            # )
+            # result = self.run_nlp(context, args.query, prompt).strip()
+            # filename = result.split("\n")[0].replace("`", "").strip("'\" ").split()[0]
+            filename = self.get_file(args.query)
+            self.print(f"Opening: {filename}", style="green")
             file_path = resolve_path(filename)
         else:
             file_path = resolve_path(args.file or "untitled.txt")

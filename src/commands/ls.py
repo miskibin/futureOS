@@ -11,17 +11,10 @@ class ls(Command):
     """
      NAME
         ls - list directory contents
-
-    SYNOPSIS
-        ls [directory]
-        --graph (-g) Display all files in the file system
-        --query (-q) Natural language query
-
     DESCRIPTION
         List information about the files in the current directory.
         If a directory is specified, list contents of that directory.
         Use --graph to show a visual representation of the file system.
-
     NATURAL LANGUAGE COMMANDS
         - Show files in directory X
         - List contents of folder X
@@ -29,8 +22,10 @@ class ls(Command):
         - What is in directory X
         - Display files in directory X
         - Show what's in folder X
-        - what is in current dir
-        - what is in this dir
+        - What is in the current directory?
+        - What is in this directory?
+        - List all items in directory X
+        - Show me the files in directory X
     """
 
     def _configure_parser(self) -> None:
@@ -45,9 +40,7 @@ class ls(Command):
         directory = args.directory
         if args.query:
             all_paths = get_all_directories()
-            context = "\n".join(
-                f"{d}: {', '.join(f)}" for d, f in all_paths.items()
-            )
+            context = "\n".join(f"{d}: {', '.join(f)}" for d, f in all_paths.items())
             prompt = (
                 "Given the directory list:\n{context}\n"
                 "You can use . if you want to list the current directory\n"
@@ -67,9 +60,7 @@ class ls(Command):
                     f"[blue]{dir_path}[/blue]: [green]{', '.join(files)}[/green]"
                 )
             return
-        target_path = resolve_path(
-            directory if directory else '.'
-        )
+        target_path = resolve_path(directory if directory else ".")
 
         if target_path.is_dir():
             self.print("\n".join(f.name for f in target_path.iterdir()))

@@ -3,12 +3,17 @@ import shlex
 import sys
 from pathlib import Path
 from typing import List, Optional
+from loguru import logger
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
 from constants import BASE_PATH, CURRENT_DIRECTORY
 from commands import get_command, COMMAND_LIST
-from init.create_collections import COMMANDS_COLLECTION, initialize_commands
+from init.create_collections import (
+    COMMANDS_COLLECTION,
+    initialize_commands,
+    initialize_files_collection,
+)
 
 console = Console()  # Global console instance
 
@@ -50,23 +55,42 @@ def show_help(command: Optional[str] = None) -> None:
 
     console.print(table)
 
-def execute_command(command_name: str, args: List[str]) -> None:
-    """Execute a command with given arguments."""
-    command = get_command(command_name)
-    if not command:  # Run AI command search
-        cmd_id = None
+
+def execute_command(command_line: str) -> None:
+    """Execute a command with the full command line input."""
+    try:
+        # First try to parse as a direct command
+        parts = shlex.split(command_line)
+        command_name = parts[0].lower()
+        args = parts[1:]
+
+        command = get_command(command_name)
+        if command:
+            # Direct command match found, execute normally
+            command(args)
+            return
+
+        # No direct match, use embedding search on full command line
         with console.status("Finding best command match..."):
-            results = COMMANDS_COLLECTION.query(
-                query_texts=f"{command_name} {' '.join(args)}", 
-                n_results=1
-            )
+            results = COMMANDS_COLLECTION.query(query_texts=[command_line], n_results=1)
             cmd_id = results["ids"][0][0]
             command = get_command(cmd_id)
-        
-        # Execute command without status message for editor
-        command(["-q", f"'{command_name} {' '.join(args)}'"])
-    else:
-        command(args)
+
+        logger.info(
+            f"Best match for command line '{command_line}': {cmd_id} similarity: {results['distances'][0][0]}"
+        )
+        if results["distances"][0][0] > 1.6:
+            console.print(
+                f"I don't think i can help you with that.",
+                style="red",
+            )
+        else:
+            command(["-q", command_line])
+
+    except ValueError as e:
+        console.print(f"Error: Invalid syntax: {e}", style="red")
+    except Exception as e:
+        console.print(f"Error: {str(e)}", style="red")
 
 
 def cleanup_and_exit():
@@ -77,32 +101,25 @@ def cleanup_and_exit():
 
 
 def main():
-    initialize_commands()
+    initialize_commands(COMMAND_LIST)
+    initialize_files_collection()
     console.print("Type 'help' for available commands", style="blue")
 
     while True:
         try:
             command_line = Prompt.ask(get_prompt())
+            command_line = command_line.strip()
 
-            if not command_line.strip():
+            if not command_line:
                 continue
 
-            try:
+            if command_line.lower() in ("exit", "quit", "q"):
+                cleanup_and_exit()
+            elif command_line.startswith("help"):
                 parts = shlex.split(command_line)
-                command_name = parts[0].lower()
-                args = parts[1:]
-
-                if command_name in ("exit", "quit", "q"):
-                    cleanup_and_exit()
-                elif command_name == "help":
-                    show_help(args[0] if args else None)
-                else:
-                    execute_command(command_name, args)
-
-            except ValueError as e:
-                console.print(f"Error: Invalid syntax: {e}", style="red")
-            except Exception as e:
-                console.print(f"Error: {str(e)}", style="red")
+                show_help(parts[1] if len(parts) > 1 else None)
+            else:
+                execute_command(command_line)
 
         except KeyboardInterrupt:
             cleanup_and_exit()

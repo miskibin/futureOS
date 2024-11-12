@@ -433,6 +433,7 @@ dependencies = [
     { name = "langchain" },
     { name = "langchain-community" },
     { name = "langchain-ollama" },
+    { name = "loguru" },
     { name = "ollama" },
     { name = "rich" },
 ]
@@ -443,6 +444,7 @@ requires-dist = [
     { name = "langchain", specifier = ">=0.3.7" },
     { name = "langchain-community", specifier = ">=0.3.5" },
     { name = "langchain-ollama", specifier = ">=0.2.0" },
+    { name = "loguru", specifier = ">=0.7.2" },
     { name = "ollama", specifier = ">=0.3.3" },
     { name = "rich", specifier = ">=13.9.4" },
 ]
@@ -805,6 +807,19 @@ dependencies = [
 sdist = { url = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/packages/packages/ab/4b/82b93695556de8a312825db19d3fbf13c914f545158efae763cc18361cca/langsmith-0.1.142.tar.gz", hash = "sha256:f8a84d100f3052233ff0a1d66ae14c5dfc20b7e41a1601de011384f16ee6cb82" }
 wheels = [
     { url = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/packages/packages/69/b0/4d8723f1615748cd7996c5ec6f207daa731bc7c73a39ce250409146a9553/langsmith-0.1.142-py3-none-any.whl", hash = "sha256:f639ca23c9a0bb77af5fb881679b2f66ff1f21f19d0bebf4e51375e7585a8b38" },
+]
+
+[[package]]
+name = "loguru"
+version = "0.7.2"
+source = { registry = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/simple" }
+dependencies = [
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "win32-setctime", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/packages/packages/9e/30/d87a423766b24db416a46e9335b9602b054a72b96a88a241f2b09b560fa8/loguru-0.7.2.tar.gz", hash = "sha256:e671a53522515f34fd406340ee968cb9ecafbc4b36c679da03c18fd8d0bd51ac" }
+wheels = [
+    { url = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/packages/packages/03/0a/4f6fed21aa246c6b49b561ca55facacc2a44b87d65b8b92362a8e99ba202/loguru-0.7.2-py3-none-any.whl", hash = "sha256:003d71e3d3ed35f0f8984898359d65b79e5b21943f78af86aa5491210429b8eb" },
 ]
 
 [[package]]
@@ -1781,6 +1796,15 @@ wheels = [
     { url = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/packages/packages/e0/c3/e4dd5d76d4aa70adac20c69b60bacbfde228f7f1affa16874bd95baa36bf/websockets-14.0-cp313-cp313-win32.whl", hash = "sha256:b24f7286a5c4e350284623cf708662f0881fe7bc1146c1a1fe7e6a9be01a8d6b" },
     { url = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/packages/packages/d8/36/eb2319fdab4486dd195dece569bb91ef9af4ee562b6d1c7ed8ac54040cfa/websockets-14.0-cp313-cp313-win_amd64.whl", hash = "sha256:fb260539dd2b64e93c9f2c59caa70d36d2020fb8e26fa17f62459ad50ebf6c24" },
     { url = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/packages/packages/a7/78/83619cfd1b5ce1a6b73724f8a3d2cc8450cf232a84a7c11bd4536a86cae7/websockets-14.0-py3-none-any.whl", hash = "sha256:1a3bca8cfb66614e23a65aa5d6b87190876ec6f3247094939f9db877db55319c" },
+]
+
+[[package]]
+name = "win32-setctime"
+version = "1.1.0"
+source = { registry = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/simple" }
+sdist = { url = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/packages/packages/6b/dd/f95a13d2b235a28d613ba23ebad55191514550debb968b46aab99f2e3a30/win32_setctime-1.1.0.tar.gz", hash = "sha256:15cf5750465118d6929ae4de4eb46e8edae9a5634350c01ba582df868e932cb2" }
+wheels = [
+    { url = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/packages/packages/0a/e6/a7d828fef907843b2a5773ebff47fb79ac0c1c88d60c0ca9530ee941e248/win32_setctime-1.1.0-py3-none-any.whl", hash = "sha256:231db239e959c2fe7eb1d7dc129f11172354f98361c4fa2d6d2d7e278baa8aad" },
 ]
 
 [[package]]

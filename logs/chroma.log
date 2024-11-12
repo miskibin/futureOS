@@ -1,0 +1,33 @@
+13:06:18 - INFO - Adding command: pwd
+13:06:18 - INFO - Adding command: cd
+13:06:18 - INFO - Adding command: ls
+13:06:18 - INFO - Adding command: cat
+13:06:18 - INFO - Adding command: nano
+13:06:18 - INFO - Found 5 files in directory
+13:06:18 - INFO - Adding file \untitled.txt
+13:06:18 - INFO - Adding file \home\finances.csv
+13:06:18 - INFO - Adding file \home\gift_list.txt
+13:06:18 - INFO - Adding file \home\work\confidential_company_data.txt
+13:06:18 - INFO - Adding file \home\work\secrets.txt
+13:06:31 - INFO - Adding command: pwd
+13:06:31 - INFO - Adding command: cd
+13:06:31 - INFO - Adding command: ls
+13:06:31 - INFO - Adding command: cat
+13:06:31 - INFO - Adding command: nano
+13:06:31 - INFO - Found 5 files in directory
+13:06:31 - INFO - Adding file \untitled.txt
+13:06:31 - INFO - Adding file \home\finances.csv
+13:06:31 - INFO - Adding file \home\gift_list.txt
+13:06:31 - INFO - Adding file \home\work\confidential_company_data.txt
+13:06:31 - INFO - Adding file \home\work\secrets.txt
+13:06:43 - INFO - Adding command: pwd
+13:06:43 - INFO - Adding command: cd
+13:06:43 - INFO - Adding command: ls
+13:06:43 - INFO - Adding command: cat
+13:06:43 - INFO - Adding command: nano
+13:06:43 - INFO - Found 5 files in directory
+13:06:43 - INFO - Adding file \untitled.txt
+13:06:43 - INFO - Adding file \home\finances.csv
+13:06:43 - INFO - Adding file \home\gift_list.txt
+13:06:43 - INFO - Adding file \home\work\confidential_company_data.txt
+13:06:43 - INFO - Adding file \home\work\secrets.txt
