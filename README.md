@@ -1,61 +1,118 @@
-# futureOS
+# FutureOS
 
-futureOS is a command-line interface (CLI) tool for managing and executing various shell commands with enhanced features. It leverages advanced libraries like `chromadb`, `langchain`, and `rich` to provide a powerful and user-friendly experience.
+FutureOS is a next-generation AI-powered command-line (POC) operating system that understands natural language and can interact with files and system resources intelligently.
 
-![image](https://github.com/user-attachments/assets/d22be02b-33d5-4c18-a516-05e6bc3715c7)
-![image](https://github.com/user-attachments/assets/803b05d0-1ee8-464c-9094-ba4e9b21f5aa)
+![image](https://github.com/user-attachments/assets/4bdf7e12-0f9b-4f68-a588-4aed67ec6d45)
 
+## Key Features
 
-## Features
+### 💡 Natural Language Understanding
 
-- Execute shell commands with natural language queries.
-- Enhanced command matching using embeddings.
-- Rich output formatting with `rich`.
-- Logging with `loguru`.
+- Interact with your system using everyday language
+- No need to remember exact command syntax
+- System understands context and intent of your requests
+
+```bash
+"what should I do today?"
+"show me my financial data"
+"I don't need this file anymore"
+```
+
+### 🔍 Intelligent Search
+
+- Vector-based search for files and directories
+- Content-aware file finding
+- Understands semantic meaning, not just keywords
+- Automatically indexes file contents for smart searching
+
+### 🤖 AI-Powered Commands
+
+Every command in FutureOS is AI-enabled with:
+
+- Natural language processing
+- Content understanding
+- Context awareness
+- Intelligent decision making
+
+### 🧠 Core AI Capabilities
+
+Each command can utilize:
+
+- **Vector Search**: Find relevant files and directories based on semantic meaning
+- **LangChain Integration**: Process and understand content intelligently
+- **Content Analysis**: Understand file contents and respond to queries about them
+- **Context Awareness**: Maintain awareness of current directory and previous interactions
+
+## Architecture
+
+### Command System
+
+Every command inherits from a base `Command` class that provides:
+
+```python
+def get_file(self, question: str, max_distance: float) -> str:
+    """Find relevant files using vector similarity search"""
+
+def get_directory(self, question: str, max_distance: float) -> str:
+    """Find relevant directories using vector similarity search"""
+
+def run_chain(self, chain: RunnablePassthrough, input: dict) -> Any:
+    """Execute LangChain operations for content processing"""
+```
+
+### AI Integration
+
+- **Vector Embeddings**: Files and directories are embedded for semantic search
+- **Language Models**: Integrated LLM support for understanding and processing
+- **Prompt Templates**: Structured communication with AI models
+- **Streaming Responses**: Real-time AI-generated responses
+
+## Examples
+
+### Natural Interaction
+
+```bash
+# Finding and reading relevant files
+> "what's in my budget file?"
+System: *finds and reads financial data using content understanding*
+
+# Directory navigation
+> "go to my pictures folder"
+System: *understands intent and changes directory*
+
+# File management
+> "I don't need this file anymore"
+System: *identifies file from context and confirms deletion*
+```
+
+### Content Understanding
+
+```bash
+# Task Management
+> "what should I do today?"
+System: *finds and analyzes task files, provides summary*
+
+# Data Analysis
+> "show me my spending from last month"
+System: *locates and interprets financial data*
+```
 
 ## Installation
 
-To install futureOS, ensure you have Python 3.12 or higher and use the `uv` packaging tool:
-
-```sh
-uv install futureos
-```
-
-## Usage
-
-After installation, you can start the CLI by running:
-
-```sh
+```bash
+pip install futureos
 python -m futureos
 ```
 
-### Available Commands
-
-- `help`: Show help for all commands or a specific command.
-- `exit`/`quit`: Exit the shell.
-
-### Example
-
-```sh
-$ python -m futureos
-Type 'help' for available commands
-
-$ /home $ ls
-# Lists the files in the current directory
-
-$ /home $ cat /home/finances.csv
-# Displays the content of the file 'finances.csv'
-```
-
-### Test results
-
-![image](https://github.com/user-attachments/assets/07b223fe-5d99-439f-9d23-178ae7ec39fe)
-
-
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request on GitHub.
+Contributions are welcome! Key areas:
+
+- New AI capabilities
+- Enhanced natural language understanding
+- Improved content analysis
+- Additional command features
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License - See LICENSE file for details.
