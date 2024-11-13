@@ -5,6 +5,8 @@ from .cat import cat
 from .nano import nano
 from .index import index
 from .answer import answer
+from .rm import rm
+
 COMMAND_LIST = {
     "pwd": pwd,
     "cd": cd,
@@ -13,6 +15,7 @@ COMMAND_LIST = {
     "nano": nano,
     "index": index,
     "answer": answer,
+    "rm": rm,
 }
 
 

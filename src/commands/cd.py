@@ -1,10 +1,8 @@
-import os
 from pathlib import Path
 from typing import Any
 from commands.command import Command
 import constants
-from utils.path_utils import resolve_path, get_all_directories
-from langchain_core.prompts import PromptTemplate
+from utils.path_utils import resolve_path
 
 
 class cd(Command):
@@ -42,27 +40,14 @@ class cd(Command):
         try:
             directory = args.directory
             if args.query:
-                all_paths = get_all_directories()
-                context = "\n".join(
-                    f"Directory: /{d}: content: {', '.join(f)}"
-                    for d, f in all_paths.items()
-                )
-                chain = (
-                    PromptTemplate.from_template(
-                        "Given the directory list:\n{context}\n"
-                        "Which directory is most relevant to the question?\n{question}\n"
-                        "Relevant path FROM THE LIST without explanation, ONLY THE PATH:"
-                    )
-                    | self.model
-                )
-
-                directory = self.run_chain(
-                    chain, {"question": args.query, "context": context}
-                )
-                directory = directory.replace("'", "").replace('"', "")
-                self.print(f"\nGoing to: {directory}", style="green")
-                if Path(directory).is_file():
-                    directory = Path(directory).parent.resolve()
+                directory = self.get_directory(args.query)
+                if directory:
+                    self.print(f"\nGoing to: {directory}", style="green")
+                    if Path(directory).is_file():
+                        directory = Path(directory).parent.resolve()
+                else:
+                    self.print("No matching directory found.", style="red")
+                    return
 
             if directory == "~":
                 target_path = constants.BASE_PATH / Path("home")

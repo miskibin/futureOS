@@ -4,7 +4,7 @@ from pathlib import Path
 from langchain_core.prompts import ChatPromptTemplate
 from commands.command import Command
 import constants
-from utils.path_utils import get_all_directories, resolve_path
+from utils.path_utils import get_all_directories, get_relative_path, resolve_path
 
 
 class ls(Command):
@@ -34,25 +34,12 @@ class ls(Command):
     def execute(self, args: Any) -> None:
         directory = args.directory
         if args.query:
-            all_paths = get_all_directories()
-            context = "\n".join(f"{d}: {', '.join(f)}" for d, f in all_paths.items())
-            prompt = (
-                "Given the directory list:\n{context}\n"
-                "You can use . if you want to list the current directory\n"
-                "Which directory is most relevant? Return only the path:\n{question}"
-            )
-            lanchain_prompt = ChatPromptTemplate.from_template(prompt) | self.model
-            directory = self.run_chain(
-                lanchain_prompt, {"question": args.query, "context": context}
-            )
-            if directory.find("`") != -1:
-                directory = directory.split("`")[1].split("`")[0]
-
-            if directory in all_paths:
+            directory = self.get_directory(args.query)
+            if directory:
                 directory = Path(directory)
             else:
-                directory = Path(directory).parent
-            self.print(f"listing: {directory}", style="green")
+                self.print("No matching directory found.", style="red")
+                return
 
         if args.graph:
             for dir_path, files in get_all_directories().items():

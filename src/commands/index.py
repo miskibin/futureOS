@@ -1,6 +1,6 @@
 from typing import Any
 from commands.command import Command
-from init.create_collections import initialize_files_collection
+from init.create_collections import initialize_directories_collection, initialize_files_collection
 
 
 class index(Command):
@@ -38,4 +38,5 @@ class index(Command):
     def execute(self, *args: Any, **kwargs: Any) -> None:
         self.print("Reindexing all files...", style="yellow")
         initialize_files_collection()
+        initialize_directories_collection()
         self.print("Reindexing completed.", style="green")

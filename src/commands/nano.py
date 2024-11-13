@@ -1,13 +1,11 @@
 from typing import Any
 from pathlib import Path
-import platform
-import os
-from rich.live import Live
-from rich.text import Text
-from rich.panel import Panel
+import curses
 from commands.command import Command
 from utils.path_utils import resolve_path
 from langchain_core.prompts import ChatPromptTemplate
+from rich.status import Status
+from rich.console import Console
 
 
 class nano(Command):
@@ -32,137 +30,209 @@ class nano(Command):
     def _configure_parser(self) -> None:
         self.parser.add_argument("file", nargs="?", type=str, help="File to edit")
 
-    def get_key(self) -> str:
-        """Get a single keypress."""
-        if platform.system() == "Windows":
-            import msvcrt
-            while True:
-                if msvcrt.kbhit():
-                    char = msvcrt.getch()
-                    # Handle special keys
-                    if char in (b'\x00', b'\xe0'):  # Arrow keys
-                        char = msvcrt.getch()
-                        return {
-                            b'H': 'up',
-                            b'P': 'down',
-                            b'K': 'left',
-                            b'M': 'right'
-                        }.get(char, '')
-                    # Handle control keys
-                    try:
-                        char = char.decode('utf-8')
-                    except:
-                        return ''
-                    return char
-        else:
-            import sys, tty, termios
-            fd = sys.stdin.fileno()
-            old = termios.tcgetattr(fd)
-            try:
-                tty.setraw(fd)
-                char = sys.stdin.read(1)
-                if char == '\x1b':
-                    next_char = sys.stdin.read(1)
-                    if next_char == '[':
-                        code = sys.stdin.read(1)
-                        return {
-                            'A': 'up',
-                            'B': 'down',
-                            'C': 'right',
-                            'D': 'left'
-                        }.get(code, '')
-                return char
-            finally:
-                termios.tcsetattr(fd, termios.TCSADRAIN, old)
-
     def generate_filename(self, content: str) -> str:
         """Generate filename using LLM based on content."""
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", "Generate a short filename with .txt extension based on content. Use lowercase letters, numbers, underscores only. Just return filename."),
-            ("user", "Content:\n{content}\nGenerate filename:")
-        ])
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "Generate a short filename with .txt extension based on content. Use lowercase letters, numbers, underscores only. Just return filename.",
+                ),
+                ("user", "Content:\n{content}\nGenerate filename:"),
+            ]
+        )
         chain = prompt | self.model
         return self.run_chain(chain, {"content": content[:500]})
 
-    def edit_file(self, file_path: Path) -> None:
-        content = []
-        if file_path.exists():
-            with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read().splitlines()
-        if not content:
-            content = [""]
+    def init_curses(self) -> None:
+        """Initialize curses settings."""
+        # curses.start_color()
+        # curses.use_default_colors()  # This allows for transparent background
+        # curses.init_pair(1, curses.COLOR_WHITE, -1)  # Normal text
+        # curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Status bar
+        # curses.init_pair(3, curses.COLOR_BLUE, -1)  # Border
 
-        cursor_y = cursor_x = 0
-        saved = True
-        message = ""
+    def draw_border(self, stdscr, height: int, width: int) -> None:
+        """Draw border around the editor."""
+        try:
+            stdscr.attron(curses.color_pair(3))
+            stdscr.box()
+            stdscr.attroff(curses.color_pair(3))
+        except curses.error:
+            pass
 
-        def render() -> Panel:
-            display = Text()
-            for i, line in enumerate(content):
-                if i == cursor_y:
-                    display.append(line[:cursor_x], style="white")
-                    display.append("█", style="white on white")
-                    display.append(line[cursor_x:], style="white")
-                else:
-                    display.append(line, style="white")
-                display.append("\n")
+    def safe_addstr(self, stdscr, y: int, x: int, string: str, attr=0) -> None:
+        """Safely add a string to the screen, truncating if necessary."""
+        height, width = stdscr.getmaxyx()
+        if y < 0 or y >= height:
+            return
 
-            status = f"{'[Modified]' if not saved else '[Saved]'} | Line {cursor_y + 1}"
-            if message:
-                status = message + " | " + status
+        # Truncate the string to fit the screen width
+        if x < 0:
+            string = string[-x:]
+            x = 0
+        if x + len(string) > width:
+            string = string[: width - x]
 
-            display.append("\n^X Exit | ^S Save | ^A AI filename", style="black on white")
-            return Panel(display, title=str(file_path), subtitle=status, border_style="blue")
+        if string:  # Only try to add if there's something to add
+            try:
+                stdscr.addstr(y, x, string, attr)
+            except curses.error:
+                pass
 
-        with Live(render(), refresh_per_second=10, screen=True) as live:
+    def draw_status_bar(
+        self, stdscr, height: int, width: int, status: str, file_path: str
+    ) -> None:
+        """Draw status bar at the bottom of the screen."""
+        status_bar = f" {status} | File: {file_path} "
+        try:
+            # Draw status line
+            self.safe_addstr(
+                stdscr, height - 2, 0, " " * (width - 1), curses.color_pair(2)
+            )
+            self.safe_addstr(
+                stdscr, height - 2, 0, status_bar[: width - 1], curses.color_pair(2)
+            )
+
+            # Draw command help line
+            help_text = "^X Exit | ^S Save | ^A AI filename"
+            self.safe_addstr(
+                stdscr, height - 1, 0, " " * (width - 1), curses.color_pair(2)
+            )
+            self.safe_addstr(stdscr, height - 1, 0, help_text, curses.color_pair(2))
+        except curses.error:
+            pass
+
+    def edit_file(self, initial_file_path: Path) -> None:
+        class EditorState:
+            def __init__(self):
+                self.file_path = initial_file_path
+                self.generating_filename = False
+
+        editor_state = EditorState()
+
+        def main(stdscr) -> None:
+            self.init_curses()
+            curses.curs_set(1)  # Show cursor
+            stdscr.keypad(True)
+
+            # Initialize content
+            content = []
+            if editor_state.file_path.exists():
+                with open(editor_state.file_path, "r", encoding="utf-8") as f:
+                    content = f.read().splitlines()
+            if not content:
+                content = [""]
+
+            cursor_y = cursor_x = 0
+            scroll_y = 0
+            saved = True
+            message = ""
+
             while True:
                 try:
-                    char = self.get_key()
+                    # Get terminal dimensions
+                    height, width = stdscr.getmaxyx()
+                    text_height = height - 3  # Reserve space for border and status bar
 
-                    if char == '\x18':  # Ctrl+X
+                    # Clear screen
+                    stdscr.clear()
+
+                    # Draw border
+                    self.draw_border(stdscr, height, width)
+
+                    # Draw content
+                    for i in range(min(text_height, len(content) - scroll_y)):
+                        line = content[scroll_y + i]
+                        self.safe_addstr(
+                            stdscr, i + 1, 1, line[: width - 2], curses.color_pair(1)
+                        )
+
+                    # Update status
+                    status = f"{'[Modified]' if not saved else '[Saved]'} | Line {cursor_y + 1}"
+                    if message:
+                        status = message + " | " + status
+                    if editor_state.generating_filename:
+                        status = "Generating filename... | " + status
+                    self.draw_status_bar(
+                        stdscr, height, width, status, str(editor_state.file_path)
+                    )
+
+                    # Position cursor
+                    try:
+                        cursor_screen_y = cursor_y - scroll_y + 1
+                        if 0 <= cursor_screen_y < height - 2:
+                            cursor_screen_x = min(cursor_x + 1, width - 2)
+                            stdscr.move(cursor_screen_y, cursor_screen_x)
+                    except curses.error:
+                        pass
+
+                    # Handle input
+                    ch = stdscr.getch()
+
+                    if ch == 24:  # Ctrl+X
                         if not saved:
-                            message = "Save? (Y/N)"
-                            live.update(render())
-                            if self.get_key().lower() == 'y':
-                                with open(file_path, "w", encoding="utf-8") as f:
+                            self.safe_addstr(
+                                stdscr,
+                                height - 2,
+                                0,
+                                "Save before exit? (Y/N) ".ljust(width - 1),
+                                curses.color_pair(2),
+                            )
+                            stdscr.refresh()
+                            if chr(stdscr.getch()).lower() == "y":
+                                with open(
+                                    editor_state.file_path, "w", encoding="utf-8"
+                                ) as f:
                                     f.write("\n".join(content))
                         break
 
-                    elif char == '\x13':  # Ctrl+S
-                        with open(file_path, "w", encoding="utf-8") as f:
+                    elif ch == 19:  # Ctrl+S
+                        with open(editor_state.file_path, "w", encoding="utf-8") as f:
                             f.write("\n".join(content))
                         saved = True
                         message = "Saved"
 
-                    elif char == '\x01':  # Ctrl+A
+                    elif ch == 1:  # Ctrl+A
+                        editor_state.generating_filename = True
+                        stdscr.refresh()
+                        curses.endwin()  # Temporarily end curses mode
                         new_filename = self.generate_filename("\n".join(content))
-                        file_path = resolve_path(new_filename.strip())
-                        message = f"New filename: {file_path}"
+                        editor_state.file_path = resolve_path(new_filename.strip())
+                        message = f"New filename: {editor_state.file_path}"
+                        editor_state.generating_filename = False
+                        curses.initscr()  # Reinitialize curses
+                        self.init_curses()  # Reinitialize colors
 
-                    elif char in ('left', 'right', 'up', 'down'):
-                        if char == 'left' and cursor_x > 0:
-                            cursor_x -= 1
-                        elif char == 'right' and cursor_x < len(content[cursor_y]):
-                            cursor_x += 1
-                        elif char == 'up' and cursor_y > 0:
-                            cursor_y -= 1
-                            cursor_x = min(cursor_x, len(content[cursor_y]))
-                        elif char == 'down' and cursor_y < len(content) - 1:
-                            cursor_y += 1
-                            cursor_x = min(cursor_x, len(content[cursor_y]))
+                    elif ch == curses.KEY_LEFT and cursor_x > 0:
+                        cursor_x -= 1
+                    elif ch == curses.KEY_RIGHT and cursor_x < len(content[cursor_y]):
+                        cursor_x += 1
+                    elif ch == curses.KEY_UP and cursor_y > 0:
+                        cursor_y -= 1
+                        if cursor_y < scroll_y:
+                            scroll_y = cursor_y
+                        cursor_x = min(cursor_x, len(content[cursor_y]))
+                    elif ch == curses.KEY_DOWN and cursor_y < len(content) - 1:
+                        cursor_y += 1
+                        if cursor_y >= scroll_y + text_height:
+                            scroll_y = cursor_y - text_height + 1
+                        cursor_x = min(cursor_x, len(content[cursor_y]))
 
-                    elif char in ('\r', '\n'):  # Enter
+                    elif ch in (10, 13):  # Enter
                         line = content[cursor_y]
                         content[cursor_y] = line[:cursor_x]
                         content.insert(cursor_y + 1, line[cursor_x:])
                         cursor_y += 1
+                        if cursor_y >= scroll_y + text_height:
+                            scroll_y += 1
                         cursor_x = 0
                         saved = False
 
-                    elif char in ('\x7f', '\x08'):  # Backspace
+                    elif ch in (8, 127, curses.KEY_BACKSPACE):  # Backspace
                         if cursor_x > 0:
                             line = content[cursor_y]
-                            content[cursor_y] = line[:cursor_x - 1] + line[cursor_x:]
+                            content[cursor_y] = line[: cursor_x - 1] + line[cursor_x:]
                             cursor_x -= 1
                             saved = False
                         elif cursor_y > 0:
@@ -170,20 +240,24 @@ class nano(Command):
                             content[cursor_y - 1] += content[cursor_y]
                             content.pop(cursor_y)
                             cursor_y -= 1
+                            if cursor_y < scroll_y:
+                                scroll_y = cursor_y
                             saved = False
 
-                    elif char and char.isprintable():
+                    elif 32 <= ch <= 126:  # Printable characters
                         line = content[cursor_y]
-                        content[cursor_y] = line[:cursor_x] + char + line[cursor_x:]
+                        content[cursor_y] = line[:cursor_x] + chr(ch) + line[cursor_x:]
                         cursor_x += 1
                         saved = False
 
                     message = ""
-                    live.update(render())
 
-                except Exception as e:
+                except curses.error as e:
                     message = f"Error: {str(e)}"
-                    live.update(render())
+
+                stdscr.refresh()
+
+        curses.wrapper(main)
 
     def execute(self, args: Any) -> None:
         file_path = resolve_path(args.file or "untitled.txt")

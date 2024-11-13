@@ -14,4 +14,9 @@ dependencies = [
     "ollama>=0.3.3",
     "pytest>=8.3.3",
     "rich>=13.9.4",
+    "windows-curses>=2.4.0",
 ]
+
+[[tool.uv.index]]
+url = "https://artifactory-espoo1.int.net.nokia.com/artifactory/api/pypi/rfsw-pypi-virtual/simple"
+default = true

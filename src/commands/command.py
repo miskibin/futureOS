@@ -7,7 +7,11 @@ from typing import Optional, Any
 from langchain_core.prompts import ChatPromptTemplate
 from utils.console_manager import future_console as console
 from init.create_collections import FILES_COLLECTION
+from init.create_collections import DIRECTORIES_COLLECTION
+import constants
 from langchain_core.runnables import RunnablePassthrough
+
+from utils.path_utils import get_relative_path
 
 
 class Command(ABC):
@@ -59,6 +63,27 @@ class Command(ABC):
             return
         return filename
 
+    def get_directory(self, question: str, max_distance=2.0) -> str:
+        with console.status("Searching for the directory..."):
+            enhanced_query = f"{question}\nCurrent directory: {get_relative_path(constants.CURRENT_DIRECTORY)}"
+            results = DIRECTORIES_COLLECTION.query(
+                query_texts=[enhanced_query], n_results=5
+            )
+        best_match = None
+        for i, distance in enumerate(results["distances"][0]):
+            if distance <= max_distance:
+                best_match = results["ids"][0][i]
+                break
+        if best_match:
+            self.print(f"Best match: {best_match}", style="green")
+            return best_match
+        else:
+            self.print(
+                f"I did not find a good match for the question in the directories {results['distances'][0][0]:.2f}",
+                style="yellow",
+            )
+            return None
+
     def run_chain(
         self, chain: RunnablePassthrough, input: dict, stream: bool = False
     ) -> Any:
@@ -72,6 +97,12 @@ class Command(ABC):
             else:
                 result = chain.invoke(input=input)
                 return result
+
+    def confirm_action(self, message: str) -> bool:
+        """Prompt the user for confirmation."""
+        self.print(f"{message} (y/n): ", style="yellow")
+        response = input().strip().lower()
+        return response == "y"
 
     def __call__(self, *args: Any, **kwargs: Any) -> None:
         self.execute(self.parser.parse_args(*args))

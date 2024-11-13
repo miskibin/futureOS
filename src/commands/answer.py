@@ -9,7 +9,7 @@ class answer(Command):
     answer: answer a question based on file contents
 
     QUESTION TERMS:
-    answer-question respond-to query-about file-content
+    answer-question summarize 
 
     RETURNS: answer to the question based on file content
     NOT FOR: directory contents, file paths, file editing

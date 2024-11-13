@@ -3,6 +3,10 @@ from pathlib import Path
 import constants
 
 
+def get_relative_path(path: Path) -> str:
+    return str(path).replace(str(constants.BASE_PATH), "").lstrip("/")
+
+
 def resolve_path(path: Path) -> Path:
     path_str = str(path).replace("\\", "/").strip()
     if path_str.startswith("/"):

@@ -3,20 +3,29 @@ import shlex
 from pathlib import Path
 import sys
 from typing import Optional
+
+import chromadb.server
 from utils.console_manager import future_console as console
 import constants
 from commands import answer, get_command, COMMAND_LIST
 from init.create_collections import (
     COMMANDS_COLLECTION,
+    DIRECTORIES_COLLECTION,
     initialize_commands,
+    initialize_directories_collection,
     initialize_files_collection,
+    chroma_client
 )
 
 
 def get_prompt() -> str:
     """Generate the shell prompt string."""
     try:
-        path = str(constants.CURRENT_DIRECTORY).lower().replace(str(constants.BASE_PATH).lower(), "")
+        path = (
+            str(constants.CURRENT_DIRECTORY)
+            .lower()
+            .replace(str(constants.BASE_PATH).lower(), "")
+        )
         username = os.getlogin()
         hostname = "futureOS"  # You could make this dynamic
         return f"[user]{username}[/user]@[system]{hostname}[/system] [path]{path}[/path] $ "
@@ -91,7 +100,7 @@ def execute_command(command_line: str) -> None:
 def main():
     initialize_commands(COMMAND_LIST)
     initialize_files_collection()
-
+    initialize_directories_collection()
     # Show welcome message
     console.clear()
     console.show_panel(
@@ -125,6 +134,16 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        # main()
+        initialize_directories_collection()
+        print(
+            f"query\n\n{"Current directory: /home \nget current directory"}\n"
+            "RESULT\n",
+            DIRECTORIES_COLLECTION.query(
+                query_texts=["Current directory: /home \nget current directory"],
+                n_results=2,
+            ),
+        )
+        exit()
     except KeyboardInterrupt:
         console.exit("👋 Goodbye!")
