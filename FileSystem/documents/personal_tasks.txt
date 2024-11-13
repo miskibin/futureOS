@@ -1,0 +1,6 @@
+TODO:
+- Schedule dentist appointment
+- Pay electricity bill
+- Buy groceries
+- Call mom
+- Renew gym membership

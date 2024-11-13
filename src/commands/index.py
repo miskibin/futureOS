@@ -5,31 +5,33 @@ from init.create_collections import initialize_directories_collection, initializ
 
 class index(Command):
     """
-    NAME
-        index - rebuild the file system search index
-
-    DESCRIPTION
-        Administrative command that rebuilds the internal search index
-        for all files in the system. This is a maintenance operation
-        that should only be run when:
-        - New files have been added outside the shell
-        - Search results seem incorrect or outdated
-        - The index needs to be rebuilt from scratch
-
-        This command does not search, list, or display files.
-        Use 'ls' to list files or 'find' to search files.
-
-    NATURAL LANGUAGE COMMANDS
-        - Rebuild the search index
-        - Reindex the file system
-        - Update the file index
-        - Regenerate the search index
-        - Rebuild file system index
-
-    EXAMPLES
-        > index
-        Reindexing all files...
-        Reindexing completed.
+    Command: Rebuild Search Index (index)
+    
+    Updates the system's internal search database to include new files and reflect recent 
+    changes. This command helps keep file searching fast and accurate.
+    
+    Natural Language Patterns:
+    - "Search isn't working right"
+    - "Update the search system"
+    - "Refresh the file index"
+    - "Fix the search feature"
+    - "Make search work again"
+    - "Rebuild the file database"
+    - "Search needs updating"
+    - "Refresh file searching"
+    
+    Key Concepts:
+    - Updating search
+    - Rebuilding index
+    - Refreshing system
+    - Fixing search
+    - Maintaining database
+    
+    Not Used For:
+    - Finding files
+    - Listing contents
+    - Reading files
+    - File operations
     """
 
     def _configure_parser(self) -> None:

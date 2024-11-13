@@ -1,8 +1,9 @@
 import pytest
 from rich import print
 from rich.table import Table
+from rich.console import Console
 from rich.panel import Panel
-from commands import get_command, COMMAND_LIST
+from commands import COMMAND_LIST
 from init.create_collections import initialize_commands, COMMANDS_COLLECTION
 
 
@@ -17,103 +18,121 @@ class TestCategories:
 # Test data organized by command type and complexity
 LS_COMMANDS = {
     TestCategories.BASIC: [
-        "Show files in directory",
-        "List contents of folder documents",
-        "What is in the current directory",  # This should work with ls
-        "Display files in downloads",
-        "Show what's in this folder",
-        "List all items in directory",
-        "ls .",
-        "Show me what files are here",
-        "What files do I have?",
-        "Display current folder contents",
+        "Can you check what's in here?",
+        "what is inside work directory?"
+        "I need to see the contents of the documents folder",
+        "Give me a rundown of what's in this directory",
+        "What have we got in this folder?",
+        "Mind showing me what files exist here?",
+        "Hey, what's sitting in this directory?",
+        "ls",  # Keep one direct command for baseline
+        "Would you mind listing what we have here?",
+        "Could you show me the files in this location?",
     ],
     TestCategories.COMPLEX: [
-        "I need to see what's in the folder with my project files",
-        "Could you show me the contents of the directory containing my homework",
-        "List everything inside the folder where I keep my documents",
-        "What files are stored in the directory with my backups",
-        "Show contents of the folder that has my code",
+        "I've got some project files somewhere in this folder, can you show me what's there?",
+        "Need to check my homework directory, what files do we have?",
+        "Been working on some documents, can you list them for me?",
+        "My backup folder should have some files, can you check?",
+        "What is in my code directory",
+    ],
+}
+
+RM_COMMANDS = {
+    TestCategories.BASIC: [
+        "I need to get rid of report.txt",
+        "Can you help me remove document.md?",
+        "Let's remove notes.txt",
+        "Time to say goodbye to config.yml",
+        "Need to clean up some files",
+        "Would you help me remove something?",
+        "Got to delete this file",
+    ],
+    TestCategories.COMPLEX: [
+        "There's this config file with database stuff I need to get rid of",
+        "Help me clean up these old API key files",
+        "Need to remove some sensitive data files",
+        "Got an old password file that needs to be deleted",
+        "There are some project notes I don't need anymore",
     ],
 }
 
 PWD_COMMANDS = {
     TestCategories.BASIC: [
-        "where am i?",
-        "What is the full path to my current directory?",
-        "Show me the absolute path of where I am",
-        "Print the path to my current location",
-        "Display my current directory path",
-        "pwd .",
-        "Current location please",
-        "List current path",
-        "Show directory path",
+        "Mind telling me where we are?",
+        "Could you show me my current location?",
+        "Which directory am I in right now?",
+        "What's our current position in the system?",
+        "Help me figure out where I'm working from",
+        "pwd",  # Keep one direct command
+        "Can you tell me which folder we're in?",
+        "Show me my place in the directory tree",
+        "What's my current working location?",
     ],
     TestCategories.COMPLEX: [
-        "I need to know the complete path to where I'm working right now",
-        "Tell me the full directory structure to my current position",
-        "What's the absolute filesystem path to this location",
-        "I need the full path to include in my configuration file",
+        "Need the full directory path for this documentation I'm writing",
+        "Got to know exactly where in the system I'm working",
+        "Can you show me the complete path structure to here?",
+        "Need to copy my current location for this config setup",
     ],
 }
 
 NANO_COMMANDS = {
     TestCategories.BASIC: [
-        "Edit file report.txt",
-        "Open file document.md in editor",
-        "Create new file notes.txt",
-        "Modify file config.yml",
-        "I want to edit a file",
-        "Open editor",
-        "Create and edit new file",
+        "I need to make some changes to report.txt",
+        "Let's work on document.md for a bit",
+        "Time to start a new file called notes.txt",
+        "Got to update config.yml",
+        "Want to write something new",
+        "Need to make some text changes",
+        "Let's create something",
     ],
     TestCategories.COMPLEX: [
-        "I need to edit the configuration file with my database credentials",
-        "Open the file containing my API keys in the editor",
-        "Create a new file to store my AWS access keys",
-        "Edit the text file where I keep my passwords",
-        "I want to modify the file that has my project notes",
+        "Time to update those database settings in the config",
+        "Need to make some changes to where I keep the API stuff",
+        "Let's create a new file for those AWS credentials",
+        "Got to update where I keep all those passwords",
+        "Should probably revise those project notes",
     ],
 }
 
 CAT_COMMANDS = {
     TestCategories.BASIC: [
-        "Show file content",
-        "Display file",
-        "Read file",
-        "Print file contents",
-        "Show what's in file",
+        "What's written in this file?",
+        "Can you read this out for me?",
+        "Show me content of work log",
+        "What does this file contain?",
     ],
     TestCategories.COMPLEX: [
-        "Show me the content of the file with my Facebook login",
-        "Display the contents of the file containing my passwords",
-        "I need to see what's written in my credentials file",
-        "Read out the file where I stored my API keys",
-        "Show me what's inside the configuration file with my database setup",
+        "Need to check what Facebook details I saved here",
+        "Can you show me what passwords I stored in this file?",
+        "Got to check what API keys I put in here",
+        "Print content of file with database settings ",
+        "Need to verify these configuration details",
     ],
     TestCategories.EDGE: [
-        "What does this file say",
-        "Let me see inside this document",
-        "Read out everything in this file",
-        "Display all text from this document",
+        "Hey, what's this file about?",
+        "Could you peek inside notes.txt for me?",
+        "What's the story with this file?",
+        "Mind reading through this for me?",
     ],
 }
 
 INDEX_COMMANDS = {
     TestCategories.BASIC: [
-        "Rebuild the search index",
-        "Reindex the file system",
-        "Update the file index",
-        "Regenerate the search index",
-        "Rebuild file system index",
-        "Need to rebuild the index",
-        "Update search database",
+        "Search seems off, can we fix it?",
+        "Need to refresh the file list",
+        "Can you update the search thing?",
+        "Let's get the file search working again",
+        "Something's wrong with search",
+        "Search needs a refresh",
+        "Update the file database",
     ],
     TestCategories.COMPLEX: [
-        "The search seems slow, we need to rebuild the index",
-        "Search isn't working well, please reindex everything",
-        "I added new files manually, update the search index",
-        "Regenerate indexes after adding new documents",
+        "Everything's loading really slow, might need to refresh the search",
+        "Search isn't finding my new stuff, can we fix that?",
+        "Just added a bunch of files manually, need to update things",
+        "Search is acting weird after adding those new docs",
     ],
 }
 
@@ -134,6 +153,7 @@ ALL_TEST_CASES = (
     + [(cmd, "nano") for category in NANO_COMMANDS.values() for cmd in category]
     + [(cmd, "cat") for category in CAT_COMMANDS.values() for cmd in category]
     + [(cmd, "index") for category in INDEX_COMMANDS.values() for cmd in category]
+    + [(cmd, "rm") for category in RM_COMMANDS.values() for cmd in category]
 )
 
 
@@ -170,36 +190,39 @@ test_index_commands = create_test_group("index", INDEX_COMMANDS)
 
 
 def print_test_summary(results):
-    """Print a beautiful summary of test results"""
-    table = Table(title="Command Recognition Test Results")
-    table.add_column("Query", style="cyan", width=50)
-    table.add_column("Expected", style="green")
-    table.add_column("Result", style="blue")
-    table.add_column("Status", style="bold")
+    """Print a beautiful summary of test results with proper table sizing"""
+    console = Console()
+    console_width = console.width or 100
+    table_width = min(console_width - 4, 100)  
 
+    table = Table(
+        title="Command Recognition Test Results",
+        show_header=True,
+        header_style="bold",
+        show_lines=True,  # Add lines between rows for better readability
+        width=table_width,
+    )
+    query_width = table_width - 35  # Reserve space for other columns
+    table.add_column("Query", style="cyan", width=query_width, no_wrap=False)
+    table.add_column("Expected", style="green", width=10, justify="center")
+    table.add_column("Got", style="yellow", width=10, justify="center")
+    table.add_column("Status", style="bold", width=8, justify="center")
     passed = 0
     failed = 0
-
-    # Sort results by status (failed first) and then by query
-    sorted_results = sorted(results, key=lambda x: (x[3], x[0]))
-
+    sorted_results = sorted(results, key=lambda x: (x[3], x[1]))
     for query, expected, actual, status in sorted_results:
         status_style = "green" if status else "red"
         status_text = "✓" if status else "✗"
         table.add_row(
-            query[:47] + "..." if len(query) > 50 else query,
-            expected,
-            actual,
-            status_text,
-            style=None if status else "red",
+            query, expected, actual, status_text, style=None if status else "red"
         )
         if status:
             passed += 1
         else:
             failed += 1
+    console.print(table)
+    console.print(f"\n[green]Passed: {passed}[/green] | [red]Failed: {failed}[/red]")
 
-    print(Panel(table, border_style="blue"))
-    print(f"\n[green]Passed: {passed}[/green] | [red]Failed: {failed}[/red]")
     return passed, failed
 
 

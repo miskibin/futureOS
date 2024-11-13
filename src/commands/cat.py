@@ -6,20 +6,40 @@ from utils.path_utils import get_files_in_directory, resolve_path
 
 class cat(Command):
     """
-    cat: read file contents
-
-    FILE CONTENT TERMS:
-    file-contents read-file show-contents file-text content-of-file
-    inside-file written-in-file file-data text-content read-contents
-
-    CONTENT PATTERNS:
-    read-from-X contents-of-X written-in-X inside-X data-in-X
-    whats-in-file show-text display-content read-data show-inside
-
-    RETURNS: contents of files only
-    NOT FOR: directory contents, file paths, file editing
+    Command: File Content Reader (cat)
+    
+    Displays the actual text and information stored within files. Focused on revealing 
+    what's written inside individual files, not listing directory contents.
+    
+    Natural Language Patterns:
+    - "What's written in this file?"
+    - "Show me what this config contains"
+    - "Check what settings are in here"
+    - "What did I save in this file?"
+    - "Read through this for me"
+    - "What does this document say?"
+    - "View the contents of this file"
+    - "What information is stored here?"
+    
+    Key Action Words:
+    - Read
+    - View contents
+    - Show text
+    - Check information
+    - See inside
+    
+    Context Clues:
+    - Wanting to know what's saved/stored
+    - Looking for specific information
+    - Checking settings or details
+    - Reading actual content
+    
+    Not For:
+    - Listing directory contents
+    - Showing file names
+    - Creating or editing files
+    - Searching across files
     """
-
     def _configure_parser(self) -> None:
         self.parser.add_argument(
             "files", nargs="*", type=Path, help="Files to display", default=None

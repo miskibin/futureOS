@@ -4,7 +4,7 @@ import constants
 
 
 def get_relative_path(path: Path) -> str:
-    return str(path).replace(str(constants.BASE_PATH), "").lstrip("/")
+    return str(path).replace(str(constants.BASE_PATH), "")
 
 
 def resolve_path(path: Path) -> Path:
@@ -28,12 +28,15 @@ def get_all_directories() -> dict[str, list[str]]:
     """
     try:
         directories = {}
-        for p in constants.BASE_PATH.rglob("*"):
+        base_path = constants.BASE_PATH
+        base_files = [f.name for f in base_path.iterdir() if f.is_file()]
+        directories["/"] = (
+            base_files
+        )
+        for p in base_path.rglob("*"):
             if p.is_dir():
                 files = [f.name for f in p.iterdir() if f.is_file()]
-                directories[
-                    str(p.relative_to(constants.BASE_PATH)).replace("\\", "/")
-                ] = files
+                directories[str(p.relative_to(base_path)).replace("\\", "/")] = files
         return directories
     except Exception as e:
         print(f"Error reading directory structure: {e}")

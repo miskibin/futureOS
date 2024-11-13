@@ -43,8 +43,6 @@ class cd(Command):
                 directory = self.get_directory(args.query)
                 if directory:
                     self.print(f"\nGoing to: {directory}", style="green")
-                    if Path(directory).is_file():
-                        directory = Path(directory).parent.resolve()
                 else:
                     self.print("No matching directory found.", style="red")
                     return

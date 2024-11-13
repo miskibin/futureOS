@@ -7,26 +7,42 @@ from langchain_core.prompts import ChatPromptTemplate
 from rich.status import Status
 from rich.console import Console
 
-
 class nano(Command):
     """
-    NAME
-        nano - simple text editor
-
-    SYNOPSIS
-        nano [file]
-
-    DESCRIPTION
-        A simple text editor for creating and modifying text files.
-        Use Ctrl+S to save, Ctrl+X to exit.
-
-    NATURAL LANGUAGE COMMANDS
-        - Edit file X
-        - Open file X in editor
-        - Create new file X
-        - Modify file X
+    Command: Text Editor (nano)
+    
+    Opens a simple text editor to modify configuration files, update documents, and
+    revise existing content. Particularly useful for updating settings and making
+    changes to text-based files.
+    
+    Natural Language Patterns:
+    - "Let's work on document.md for a bit"
+    - "Got to update config.yml"
+    - "Time to update those database settings in the config"
+    - "Got to update where I keep all those passwords"
+    - "Should probably revise those project notes"
+    
+    Key Concepts:
+    - Updating configuration files
+    - Revising documents
+    - Modifying settings
+    - Working on specific files
+    - Making changes to existing content
+    
+    Context Clues:
+    - Mentions of specific file types (.yml, .md)
+    - References to updating settings
+    - Need to revise or modify content
+    - Working with configuration files
+    - Updating sensitive information
+    
+    Not Used For:
+    - Just viewing file contents
+    - Listing directory contents
+    - Removing files
+    - Showing current location
+    - Reading without editing
     """
-
     def _configure_parser(self) -> None:
         self.parser.add_argument("file", nargs="?", type=str, help="File to edit")
 
@@ -264,6 +280,5 @@ class nano(Command):
         if args.query:
             filename = self.get_file(args.query, max_distance=1.6)
             if filename:
-                self.print(f"Opening: {filename}", style="green")
                 file_path = resolve_path(filename)
         self.edit_file(file_path)

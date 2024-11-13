@@ -1,5 +1,6 @@
 import sys
 import chromadb
+import chromadb.server
 from loguru import logger
 
 
@@ -24,7 +25,6 @@ logger.add(
 #     url="http://localhost:11434/api/embeddings",
 #     model_name="nomic-embed-text",
 # )
-
 
 chroma_client = chromadb.Client()
 COMMANDS_COLLECTION = chroma_client.create_collection(name="commands")
@@ -60,10 +60,9 @@ def initialize_directories_collection():
             if d.startswith(f"{dir_path}/")
         ]
         document = (
-            f"DIRECTORY: {get_relative_path(dir_path)}\n"
+            f"DIRECTORY PATH: {get_relative_path(dir_path)}\n"
             f"Directory name: {dir_name}\n"
             f"Is parent directory of: {subdirs}\n"
-            f"Files: {files}"
         )
         logger.info(f"Indexing directory {dir_path}")
-        DIRECTORIES_COLLECTION.add(documents=[document], ids=[dir_path])
+        DIRECTORIES_COLLECTION.add(documents=[document], ids=[f"/{dir_path}"])

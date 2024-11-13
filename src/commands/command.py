@@ -35,7 +35,7 @@ class Command(ABC):
         cls.model = OllamaLLM(
             # model="llama3.2",
             model="gemma2:2b",
-            num_predict=48,
+            num_predict=192,
             top_p=0.95,  # High top_p for more focused responses
         )
         return cls._instance
@@ -54,35 +54,31 @@ class Command(ABC):
         with console.status("Searching for the file..."):
             results = FILES_COLLECTION.query(query_texts=[question], n_results=1)
         filename = results["ids"][0][0]
-        self.print(f"Best match: {filename}", style="green")
         if results["distances"][0][0] > max_distance:
             self.print(
                 f"I did not find a good match for the question in the files {results['distances'][0][0]:.2f}",
                 style="yellow",
             )
             return
+        self.print(f"{self.__class__.__name__} {filename}", style="green")
         return filename
 
     def get_directory(self, question: str, max_distance=2.0) -> str:
         with console.status("Searching for the directory..."):
-            enhanced_query = f"{question}\nCurrent directory: {get_relative_path(constants.CURRENT_DIRECTORY)}"
+            enhanced_query = f"Current directory: {get_relative_path(constants.CURRENT_DIRECTORY)}\n{question}"
             results = DIRECTORIES_COLLECTION.query(
-                query_texts=[enhanced_query], n_results=5
+                query_texts=[enhanced_query], n_results=1
             )
-        best_match = None
-        for i, distance in enumerate(results["distances"][0]):
-            if distance <= max_distance:
-                best_match = results["ids"][0][i]
-                break
-        if best_match:
-            self.print(f"Best match: {best_match}", style="green")
-            return best_match
-        else:
+        directory = results["ids"][0][0]
+
+        if results["distances"][0][0] > max_distance:
             self.print(
                 f"I did not find a good match for the question in the directories {results['distances'][0][0]:.2f}",
                 style="yellow",
             )
-            return None
+            return
+        self.print(f"{self.__class__.__name__} {directory}", style="green")
+        return directory
 
     def run_chain(
         self, chain: RunnablePassthrough, input: dict, stream: bool = False

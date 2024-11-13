@@ -5,6 +5,7 @@ import sys
 from typing import Optional
 
 import chromadb.server
+from init.initialize_filesystem import initialize_filesystem
 from utils.console_manager import future_console as console
 import constants
 from commands import answer, get_command, COMMAND_LIST
@@ -14,7 +15,6 @@ from init.create_collections import (
     initialize_commands,
     initialize_directories_collection,
     initialize_files_collection,
-    chroma_client
 )
 
 
@@ -98,6 +98,7 @@ def execute_command(command_line: str) -> None:
 
 
 def main():
+    initialize_filesystem(constants.BASE_PATH)
     initialize_commands(COMMAND_LIST)
     initialize_files_collection()
     initialize_directories_collection()
@@ -134,16 +135,13 @@ def main():
 
 if __name__ == "__main__":
     try:
-        # main()
-        initialize_directories_collection()
-        print(
-            f"query\n\n{"Current directory: /home \nget current directory"}\n"
-            "RESULT\n",
-            DIRECTORIES_COLLECTION.query(
-                query_texts=["Current directory: /home \nget current directory"],
-                n_results=2,
-            ),
-        )
-        exit()
+        main()
+        # initialize_directories_collection()
+        # query_text = "Current directory: /home\n list files from the work directory"
+        # result = DIRECTORIES_COLLECTION.query(
+        #     query_texts=[query_text], n_results=3, include=["documents", "distances"]
+        # )
+        # print(f"query\n\n{query_text}\nRESULT\n", result)
+        # exit()
     except KeyboardInterrupt:
         console.exit("👋 Goodbye!")

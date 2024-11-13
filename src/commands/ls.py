@@ -9,18 +9,40 @@ from utils.path_utils import get_all_directories, get_relative_path, resolve_pat
 
 class ls(Command):
     """
-    ls: list directory contents
-
-    DIRECTORY TERMS:
-    list-files show-files directory-contents folder-contents list-directory
-    file-list folder-list directory-items folder-items list-contents
-
-    FILE LISTING PATTERNS:
-    files-in-X contents-of-X items-in-X files-here list-everything
-    show-files display-files what-files list-files show-contents
-
-    RETURNS: list of files and folders only
-    NOT FOR: file contents, file paths, file editing
+    Command: Directory Viewer (ls)
+    
+    Lists files and documents in the current working directory. Shows available
+    files without displaying their contents, useful for finding documents to work on.
+    
+    Natural Language Patterns:
+    - "Been working on some documents, can you list them for me?"
+    - "What is in my code directory"
+    - "what is inside this directory?"
+    - "Show me what documents I have"
+    - "List available files"
+    - "Show me what's in this folder"
+    - "What files do I have here"
+    
+    Key Action Words:
+    - List
+    - Show
+    - Find
+    - Display
+    - What is in
+    
+    Context Clues:
+    - Asking about multiple documents/files
+    - Questions about directory contents
+    - Wanting to see available options
+    - References to folders or directories
+    - General inquiries about what files exist
+    
+    Not For:
+    - Reading file contents
+    - Updating configurations
+    - Working on specific documents
+    - Removing files
+    - Getting current directory path
     """
 
     def _configure_parser(self) -> None:

@@ -1,0 +1,10 @@
+Project: Customer Portal Redesign
+Due Date: April 30, 2024
+
+Objectives:
+1. Improve user experience
+2. Reduce support tickets by 30%
+3. Increase self-service adoption
+
+Budget: $75,000
+Timeline: 3 months

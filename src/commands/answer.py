@@ -9,7 +9,7 @@ class answer(Command):
     answer: answer a question based on file contents
 
     QUESTION TERMS:
-    answer-question summarize 
+    answer-question summarize
 
     RETURNS: answer to the question based on file content
     NOT FOR: directory contents, file paths, file editing
@@ -31,7 +31,7 @@ class answer(Command):
             with open(resolved_path, "r") as file:
                 file_content = file.read()
                 prompt = (
-                    "Basing on best matched file content:\n{file_content}\n\n"
+                    "Basing on file content found in user files:\nName: {name} \n{file_content}\n\n"
                     "Answer the following question:\n{question}"
                 )
                 messages = (
@@ -42,7 +42,11 @@ class answer(Command):
                 )
                 self.run_chain(
                     messages,
-                    {"question": question, "file_content": file_content},
+                    {
+                        "question": question,
+                        "file_content": file_content,
+                        "name": filename,
+                    },
                     stream=True,
                 )
         except Exception as e:

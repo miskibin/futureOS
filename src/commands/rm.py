@@ -6,18 +6,33 @@ from utils.path_utils import resolve_path
 
 class rm(Command):
     """
-    rm: remove files
-
-    FILE REMOVAL TERMS:
-    delete-file remove-file erase-file discard-file
-    file-deletion file-removal file-erasure file-discard
-
-    REMOVAL PATTERNS:
-    delete-X remove-X erase-X discard-X
-    delete-file-X remove-file-X erase-file-X discard-file-X
-
-    RETURNS: confirmation of file removal
-    NOT FOR: directory removal, file editing, file reading
+    Command: Remove Files (rm)
+    
+    Permanently deletes files from the system. This command helps you remove unwanted 
+    or unnecessary files to clean up your storage space.
+    
+    Natural Language Patterns:
+    - "Delete this file"
+    - "Remove [filename]"
+    - "Get rid of this document"
+    - "I need to delete [filename]"
+    - "Take this file out"
+    - "Clean up these files"
+    - "Remove these old documents"
+    - "Delete unwanted files"
+    
+    Key Concepts:
+    - File deletion
+    - Removing content
+    - Cleaning up files
+    - Getting rid of documents
+    - Deleting data
+    
+    Not Used For:
+    - Deleting directories
+    - Moving files
+    - Hiding files
+    - Editing content
     """
 
     def _configure_parser(self) -> None:
