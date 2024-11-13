@@ -13,17 +13,12 @@ class pwd(Command):
     
     Natural Language Patterns:
     - "Where am I right now?"
-    - "What's my current location?"
-    - "Which directory am I in?"
     - "Show me my current path"
     - "What folder am I working in?"
     - "Tell me where I'm located"
-    - "What's my position in the system?"
     - "Need to know my current directory"
     
     Key Concepts:
-    - Current location
-    - Directory path
     - Working directory
     - System location
     - Current position

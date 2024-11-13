@@ -8,7 +8,6 @@ from .answer import answer
 from .rm import rm
 
 COMMAND_LIST = {
-    "pwd": pwd,
     "cd": cd,
     "ls": ls,
     "cat": cat,
@@ -16,6 +15,7 @@ COMMAND_LIST = {
     "index": index,
     "answer": answer,
     "rm": rm,
+    # "pwd": pwd,
 }
 
 
