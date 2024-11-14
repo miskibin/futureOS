@@ -1,49 +1,43 @@
-# FutureOS
+# FutureOS 🚀
 
-My take of how Operating systems will be build in the future.
+My take on how Operating Systems will be built in the future.
 
-Currently there are a lot of tools for both windows and mac, like: 
-- [claude computer use](https://www.anthropic.com/news/3-5-models-and-computer-use)
-- [github copilot](https://copilot.github.com)
-or new siri on the mac.
 
-But those are just tools that implement thiers own method of indexing and searching files, and they are not integrated with the OS.
-qWell. Guess what. Now it is. (It is POC).
+<img src="https://github.com/user-attachments/assets/4bdf7e12-0f9b-4f68-a588-4aed67ec6d45" alt="FutureOS Interface" />
 
-What if every utility in the OS had access to `vector search` for collection for all `files`, `directoires`, `pictures` and so on. All those would be indexed by the OS every time a file is created or modified.
-What if every utility had access to `AI chain` like lanchain chain, that would be deeply integrated into the OS, and every command would be able to use it.
+## 🌟 The Challenge
 
-Let's get further
-Why force the user to remember what command should he use with what parameters and arguments. 
-If we create descriptive docstring for the command, we could create vector store with all commands, and then just choose best command for user input. He does not even needs to know the exact command name.
-Yep but it seems like without proper testing user wouldn't like it. I know. That is why there are [multiple tests](/tests/test_create_collections.py) for every command with output easy to parse by llm.
+Currently, there are several powerful AI tools for both Windows and macOS:
 
-![image](https://github.com/user-attachments/assets/4bdf7e12-0f9b-4f68-a588-4aed67ec6d45)
+- 🤖 [Claude computer use](https://www.anthropic.com/news/3-5-models-and-computer-use)
+- 👨‍💻 [GitHub Copilot](https://copilot.github.com)
+- 🗣️ New Siri on Mac
 
-## Key Features
+However, these tools implement their own methods of indexing and searching files, and they're not integrated with the OS.
 
-### 💡 Natural Language Understanding
 
-- Interact with your system using everyday language
-- No need to remember exact command syntax
-- System understands context and intent of your requests
+## 💡 The Vision
 
-```bash
-"what should I do today?"
-"show me my financial data"
-"I don't need this file anymore"
-```
+What if:
 
-### 🧠 Core AI Capabilities
+- Every utility in the OS had access to `vector search` for collections of all `files`, `directories`, `pictures`, and more?
+- All content was automatically indexed by the OS whenever a file is created or modified?
+- Every utility had access to an `AI chain` (like LangChain) deeply integrated into the OS?
+- Every command could leverage these AI capabilities?
 
-Each command can utilize:
+Let's go further... 🚀
 
-- **Vector Search**: Find relevant files and directories based on semantic meaning
-- **LangChain Integration**: Process and understand content intelligently
-- **Content Analysis**: Understand file contents and respond to queries about them
-- **Context Awareness**: Maintain awareness of current directory and previous interactions
+Why force users to remember specific commands with their parameters and arguments? By creating descriptive docstrings for commands, we can build a vector store of all commands and automatically choose the best one for user input. Users don't even need to know exact command names!
 
-## Architecture
+
+
+## ✅ Quality Assurance
+
+"But without proper testing, users wouldn't like it."
+
+I know! That's why there are [multiple tests](/tests/test_create_collections.py) for every command with output that's easy to parse by LLM.
+
+## 🏗️ Architecture
 
 ### Command System
 
@@ -60,59 +54,73 @@ def run_chain(self, chain: RunnablePassthrough, input: dict) -> Any:
     """Execute LangChain operations for content processing"""
 ```
 
-### AI Integration
+### 🔍 How Commands Work
 
-- **Vector Embeddings**: Files and directories are embedded for semantic search
-- **Language Models**: Integrated LLM support for understanding and processing
-- **Prompt Templates**: Structured communication with AI models
-- **Streaming Responses**: Real-time AI-generated responses
+Let's break down how a typical command (cd) is constructed:
 
-## Examples
+```python
+class cd(Command):
+    """
+    NAME
+        cd - change the current working directory
 
-### Natural Interaction
+    SYNOPSIS
+        cd [directory]
 
-```bash
-# Finding and reading relevant files
-> "what's in my budget file?"
-System: *finds and reads financial data using content understanding*
+    DESCRIPTION
+        Change the current working directory to the specified directory.
 
-# Directory navigation
-> "go to my pictures folder"
-System: *understands intent and changes directory*
-
-# File management
-> "I don't need this file anymore"
-System: *identifies file from context and confirms deletion*
+    NATURAL LANGUAGE COMMANDS
+        - Change directory to X
+        - Go to folder X
+        - Navigate to directory X
+    """
 ```
 
-### Content Understanding
+The docstring serves multiple purposes:
 
-```bash
-# Task Management
-> "what should I do today?"
-System: *finds and analyzes task files, provides summary*
+1. **Vector Embedding Source**: Used to create embeddings for command matching
+2. **Natural Language Patterns**: Defines common ways users might express the command
+3. **Documentation**: Serves as built-in help text
 
-# Data Analysis
-> "show me my spending from last month"
-System: *locates and interprets financial data*
+### Command Implementation
+
+```python
+def execute(self, args: Any) -> None:
+    try:
+        # Handle both traditional and natural language input
+        directory = self.get_directory(args.query) if args.query else args.directory
+
+        # Resolve and validate path
+        target_path = resolve_path(directory)
+
+        # Execute directory change
+        if target_path.is_dir():
+            constants.CURRENT_DIRECTORY = target_path
+            self.print(f"Changed to {target_path}", style="green")
+    except Exception as e:
+        self.print(f"Error: {str(e)}", style="red")
 ```
 
-## Installation
+## 🚀 Getting Started
 
 ```bash
+# Install
 pip install futureos
+
+# Launch
 python -m futureos
 ```
 
-## Contributing
+## 🤝 Contributing
 
-Contributions are welcome! Key areas:
+We welcome contributions in:
 
-- New AI capabilities
-- Enhanced natural language understanding
-- Improved content analysis
-- Additional command features
+- 🧠 AI capability enhancements
+- 🗣️ Natural language understanding
+- 📊 Content analysis improvements
+- ⚙️ New command features
 
-## License
+## 📄 License
 
-MIT License - See LICENSE file for details.
+MIT License - See [LICENSE](LICENSE) file for details.
