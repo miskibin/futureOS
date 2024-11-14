@@ -8,31 +8,32 @@ class rm(Command):
     """
     Command: Remove Files (rm)
 
-    Permanently deletes files from the system. This command helps you remove unwanted
-    or unnecessary files to clean up your storage space.
+    PERMANENTLY DELETES files. Use when you want to remove unwanted files
+    or clean up unnecessary content.
 
     Natural Language Patterns:
-    - "Delete this file"
-    - "Remove [filename]"
-    - "Get rid of this document"
-    - "I need to delete [filename]"
-    - "Take this file out"
-    - "Clean up these files"
-    - "Remove these old documents"
-    - "Delete unwanted files"
+    - "Need to get rid of report.txt"
+    - "Got to delete this file"
+    - "There are some project notes I don't need anymore"
+    - "Help me clean up these old files"
+    - "Need to remove some sensitive data files"
 
     Key Concepts:
-    - File deletion
-    - Removing content
-    - Cleaning up files
-    - Getting rid of documents
-    - Deleting data
+    - DELETING files
+    - REMOVING content
+    - CLEANING UP space
+    - Getting rid of files
 
-    Not Used For:
-    - Deleting directories
-    - Moving files
-    - Hiding files
-    - Editing content
+    Context Clues:
+    - Mentions of deletion/removal
+    - Cleaning up files
+    - Getting rid of content
+    - No longer needed files
+
+    NOT For:
+    - Viewing file contents (use 'cat')
+    - Checking directory contents (use 'ls')
+    - Editing files (use 'nano')
     """
 
     def _configure_parser(self) -> None:

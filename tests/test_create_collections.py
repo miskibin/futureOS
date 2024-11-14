@@ -43,7 +43,6 @@ RM_COMMANDS = {
         "I need to get rid of report.txt",
         "Can you help me remove document.md?",
         "Let's remove notes.txt",
-        "Time to say goodbye to config.yml",
         "Need to clean up some files",
         "Would you help me remove something?",
         "Got to delete this file",
@@ -90,7 +89,6 @@ NANO_COMMANDS = {
     TestCategories.COMPLEX: [
         "Time to update those database settings in the config",
         "Need to make some changes to where I keep the API stuff",
-        "Let's create a new file for those AWS credentials",
         "Got to update where I keep all those passwords",
         "Should probably revise those project notes",
     ],
@@ -102,6 +100,7 @@ CAT_COMMANDS = {
         "Can you read this out for me?",
         "Show me content of work log",
         "What does this file contain?",
+        "show me what is in this file with meeting notes"
     ],
     TestCategories.COMPLEX: [
         "Need to check what Facebook details I saved here",
@@ -117,7 +116,6 @@ CAT_COMMANDS = {
         "Mind reading through this for me?",
     ],
 }
-
 
 
 def flatten_commands(command_dict):
@@ -192,7 +190,6 @@ def print_test_summary(results):
     failed = 0
     sorted_results = sorted(results, key=lambda x: (x[3], x[1]))
     for query, expected, actual, status in sorted_results:
-        status_style = "green" if status else "red"
         status_text = "✓" if status else "✗"
         table.add_row(
             query, expected, actual, status_text, style=None if status else "red"

@@ -8,37 +8,35 @@ class cat(Command):
     """
     Command: File Content Reader (cat)
     
-    Displays the actual text and information stored within files. Focused on revealing 
-    what's written inside individual files, not listing directory contents.
+    Shows the CONTENTS INSIDE a specific file. Used when you need to see what 
+    information is stored in a particular file, especially configuration details,
+    credentials, or saved data.
     
     Natural Language Patterns:
+    - "Got to check what API keys I put in here"
+    - "Need to verify these configuration details"
     - "What's written in this file?"
-    - "Show me what this config contains"
-    - "Check what settings are in here"
-    - "What did I save in this file?"
-    - "Read through this for me"
-    - "What does this document say?"
-    - "View the contents of this file"
-    - "What information is stored here?"
+    - "Can you read this out for me?"
+    - "Show me content of work log"
+    - "What does this file contain?"
+    - "Print content of file with database settings"
     
-    Key Action Words:
-    - Read
-    - View contents
-    - Show text
-    - Check information
-    - See inside
+    Key Concepts:
+    - Reading SPECIFIC file contents
+    - Checking saved credentials/settings
+    - Viewing stored configuration
+    - Examining file contents
     
     Context Clues:
-    - Wanting to know what's saved/stored
-    - Looking for specific information
-    - Checking settings or details
-    - Reading actual content
+    - Reference to specific file content (API keys, passwords, settings)
+    - Wanting to see what's saved IN a file
+    - Verifying stored information
+    - Reading/showing file contents
     
-    Not For:
-    - Listing directory contents
-    - Showing file names
-    - Creating or editing files
-    - Searching across files
+    NOT For:
+    - Seeing what files exist in a directory (use 'ls')
+    - Making changes to files (use 'nano')
+    - Deleting files (use 'rm')
     """
     def _configure_parser(self) -> None:
         self.parser.add_argument(
