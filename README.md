@@ -2,8 +2,20 @@
 
 My take on how Operating Systems will be built in the future.
 
-
 <img src="https://github.com/user-attachments/assets/4bdf7e12-0f9b-4f68-a588-4aed67ec6d45" alt="FutureOS Interface" />
+
+## 🚀 Getting Started
+
+```bash
+# Install
+pip install futureos
+
+# Launch
+python -m futureos
+```
+
+> [!IMPORTANT]  
+> To use FutureOS, ensure you have Ollama installed with the `gemma2:2b` model. For optimal performance, CUDA should be enabled on your system.
 
 ## 🌟 The Challenge
 
@@ -14,7 +26,6 @@ Currently, there are several powerful AI tools for both Windows and macOS:
 - 🗣️ New Siri on Mac
 
 However, these tools implement their own methods of indexing and searching files, and they're not integrated with the OS.
-
 
 ## 💡 The Vision
 
@@ -28,8 +39,6 @@ What if:
 Let's go further... 🚀
 
 Why force users to remember specific commands with their parameters and arguments? By creating descriptive docstrings for commands, we can build a vector store of all commands and automatically choose the best one for user input. Users don't even need to know exact command names!
-
-
 
 ## ✅ Quality Assurance
 
@@ -102,28 +111,9 @@ def execute(self, args: Any) -> None:
         self.print(f"Error: {str(e)}", style="red")
 ```
 
-## 🚀 Getting Started
-
-```bash
-# Install
-pip install futureos
-
-# Launch
-python -m futureos
-```
-
-> [!IMPORTANT]  
-> To use FutureOS, ensure you have Ollama installed with the `gemma2:2b` model. For optimal performance, CUDA should be enabled on your system.
-
-
 ## 🤝 Contributing
 
-We welcome contributions in:
-
-- 🧠 AI capability enhancements
-- 🗣️ Natural language understanding
-- 📊 Content analysis improvements
-- ⚙️ New command features
+All contributors are welcome!
 
 ## 📄 License
 
