@@ -31,10 +31,13 @@ jobs:
       run: |
         uv venv
         uv pip install -e .
-        uv pip install pytest
+
+    - name: Install pytest separately
+      run: |
+        pip install pytest
 
     - name: Add futureos to PYTHONPATH and run tests
       env:
         PYTHONPATH: ${{ github.workspace }}
       run: |
-        uv pytest
+        pytest
