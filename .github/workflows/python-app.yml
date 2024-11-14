@@ -34,5 +34,7 @@ jobs:
         uv pip install pytest
 
     - name: Add futureos to PYTHONPATH and run tests
+      env:
+        PYTHONPATH: ${{ github.workspace }}
       run: |
-        python -m pytest 
+        uv pytest
