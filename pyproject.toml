@@ -1,15 +1,14 @@
 [project]
 name = "futureos"
-version = "0.2.2"
+version = "0.3.0"
 description = "First fully AI based Operating system "
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["AI", "Operating System", "ollama", "python", "chromadb", "langchain"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

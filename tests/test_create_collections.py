@@ -100,7 +100,7 @@ CAT_COMMANDS = {
         "Can you read this out for me?",
         "Show me content of work log",
         "What does this file contain?",
-        "show me what is in this file with meeting notes"
+        "show me what content of this file with meeting notes"
     ],
     TestCategories.COMPLEX: [
         "Need to check what Facebook details I saved here",
