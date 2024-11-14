@@ -3,18 +3,18 @@ from .pwd import pwd
 from .cd import cd
 from .cat import cat
 from .nano import nano
-from .index import index
 from .answer import answer
 from .rm import rm
+from .cls import cls
 
 COMMAND_LIST = {
     "cd": cd,
     "ls": ls,
     "cat": cat,
     "nano": nano,
-    "index": index,
     "answer": answer,
     "rm": rm,
+    "cls": cls,
     # "pwd": pwd,
 }
 

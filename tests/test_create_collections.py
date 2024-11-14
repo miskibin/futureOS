@@ -118,23 +118,6 @@ CAT_COMMANDS = {
     ],
 }
 
-INDEX_COMMANDS = {
-    TestCategories.BASIC: [
-        "Search seems off, can we fix it?",
-        "Need to refresh the file list",
-        "Can you update the search thing?",
-        "Let's get the file search working again",
-        "Something's wrong with search",
-        "Search needs a refresh",
-        "Update the file database",
-    ],
-    TestCategories.COMPLEX: [
-        "Everything's loading really slow, might need to refresh the search",
-        "Search isn't finding my new stuff, can we fix that?",
-        "Just added a bunch of files manually, need to update things",
-        "Search is acting weird after adding those new docs",
-    ],
-}
 
 
 def flatten_commands(command_dict):
@@ -152,7 +135,6 @@ ALL_TEST_CASES = (
     # + [(cmd, "pwd") for category in PWD_COMMANDS.values() for cmd in category]
     + [(cmd, "nano") for category in NANO_COMMANDS.values() for cmd in category]
     + [(cmd, "cat") for category in CAT_COMMANDS.values() for cmd in category]
-    + [(cmd, "index") for category in INDEX_COMMANDS.values() for cmd in category]
     + [(cmd, "rm") for category in RM_COMMANDS.values() for cmd in category]
 )
 
@@ -186,7 +168,6 @@ test_ls_commands = create_test_group("ls", LS_COMMANDS)
 # test_pwd_commands = create_test_group("pwd", PWD_COMMANDS)
 test_nano_commands = create_test_group("nano", NANO_COMMANDS)
 test_cat_commands = create_test_group("cat", CAT_COMMANDS)
-test_index_commands = create_test_group("index", INDEX_COMMANDS)
 
 
 def print_test_summary(results):

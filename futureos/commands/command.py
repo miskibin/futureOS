@@ -1,12 +1,17 @@
 from abc import ABC, abstractmethod
 from argparse import ArgumentParser
+from chromadb import Collection
 from langchain_ollama import OllamaLLM
 from rich.console import Console
 from rich.status import Status
-from typing import Optional, Any
+from typing import Literal, Optional, Any
 from langchain_core.prompts import ChatPromptTemplate
 from futureos.utils.console_manager import future_console as console
-from futureos.init.create_collections import FILES_COLLECTION
+from futureos.init.create_collections import (
+    FILES_COLLECTION,
+    initialize_directories_collection,
+    initialize_files_collection,
+)
 from futureos.init.create_collections import DIRECTORIES_COLLECTION
 from futureos import constants
 from langchain_core.runnables import RunnablePassthrough
@@ -83,7 +88,7 @@ class Command(ABC):
     def run_chain(
         self, chain: RunnablePassthrough, input: dict, stream: bool = False
     ) -> Any:
-        with console.status("Running the model..."):
+        with console.status(f"{self.__class__.__name__} is Running llm..."):
             if stream:
                 result = ""
                 for chunk in chain.stream(input=input):
@@ -99,6 +104,16 @@ class Command(ABC):
         self.print(f"{message} (y/n): ", style="yellow")
         response = input().strip().lower()
         return response == "y"
+
+    def update_indexes(
+        self, collection: Literal["files", "directories"], ids: list[str]
+    ):
+        self.print(f"Updating {collection} collection...", style="yellow")
+        function = {
+            "files": initialize_files_collection,
+            "directories": initialize_directories_collection,
+        }
+        function[collection](ids)
 
     def __call__(self, *args: Any, **kwargs: Any) -> None:
         self.execute(self.parser.parse_args(*args))

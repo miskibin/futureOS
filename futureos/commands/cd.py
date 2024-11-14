@@ -40,7 +40,6 @@ class cd(Command):
             target_path = constants.BASE_PATH / Path("home") if directory == "~" else resolve_path(directory)
             if target_path.is_dir():
                 constants.CURRENT_DIRECTORY = target_path
-                self.print(f"Changed to {target_path}", style="green")
             else:
                 self.print(f"Error: '{target_path}' is not a directory", style="red")
         except Exception as e:

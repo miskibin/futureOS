@@ -2,40 +2,41 @@ from typing import Any
 from pathlib import Path
 import curses
 from futureos.commands.command import Command
-from futureos.utils.path_utils import resolve_path
+from futureos.utils.path_utils import get_relative_path, resolve_path
 from langchain_core.prompts import ChatPromptTemplate
 from rich.status import Status
 from rich.console import Console
 
+
 class nano(Command):
     """
     Command: Text Editor (nano)
-    
+
     Opens a simple text editor to modify configuration files, update documents, and
     revise existing content. Particularly useful for updating settings and making
     changes to text-based files.
-    
+
     Natural Language Patterns:
     - "Let's work on document.md for a bit"
     - "Got to update config.yml"
     - "Time to update those database settings in the config"
     - "Got to update where I keep all those passwords"
     - "Should probably revise those project notes"
-    
+
     Key Concepts:
     - Updating configuration files
     - Revising documents
     - Modifying settings
     - Working on specific files
-    - Making changes to existing content
-    
+    - Making changes to cls content
+
     Context Clues:
     - Mentions of specific file types (.yml, .md)
     - References to updating settings
     - Need to revise or modify content
     - Working with configuration files
     - Updating sensitive information
-    
+
     Not Used For:
     - Just viewing file contents
     - Listing directory contents
@@ -43,6 +44,7 @@ class nano(Command):
     - Showing current location
     - Reading without editing
     """
+
     def _configure_parser(self) -> None:
         self.parser.add_argument("file", nargs="?", type=str, help="File to edit")
 
@@ -214,7 +216,16 @@ class nano(Command):
                         stdscr.refresh()
                         curses.endwin()  # Temporarily end curses mode
                         new_filename = self.generate_filename("\n".join(content))
-                        editor_state.file_path = resolve_path(new_filename.strip())
+                        new_file_path = resolve_path(new_filename.strip())
+                        editor_state.file_path.rename(new_file_path)
+                        self.update_indexes(
+                            "files",
+                            [
+                                str(get_relative_path(editor_state.file_path)),
+                                str(get_relative_path(new_file_path)),
+                            ],
+                        )
+                        editor_state.file_path = new_file_path
                         message = f"New filename: {editor_state.file_path}"
                         editor_state.generating_filename = False
                         curses.initscr()  # Reinitialize curses
@@ -281,4 +292,9 @@ class nano(Command):
             filename = self.get_file(args.query, max_distance=1.6)
             if filename:
                 file_path = resolve_path(filename)
+            else:
+                with open(file_path, "w") as f:
+                    f.write("")
+
         self.edit_file(file_path)
+        self.update_indexes("files", [str(get_relative_path(file_path))])
