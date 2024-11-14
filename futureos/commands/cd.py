@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 from futureos.commands.command import Command
-import futureos.constants
+from futureos import constants
 from futureos.utils.path_utils import resolve_path
 
 

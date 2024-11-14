@@ -3,7 +3,7 @@ from typing import Optional, Any
 from pathlib import Path
 from langchain_core.prompts import ChatPromptTemplate
 from futureos.commands.command import Command
-import futureos.constants
+from futureos import constants
 from futureos.utils.path_utils import get_all_directories, get_relative_path, resolve_path
 
 

@@ -7,7 +7,7 @@ from typing import Optional
 import chromadb.server
 from futureos.init.initialize_filesystem import initialize_filesystem
 from futureos.utils.console_manager import future_console as console
-import futureos.constants
+from futureos import constants
 from futureos.commands import answer, get_command, COMMAND_LIST
 from futureos.init.create_collections import (
     COMMANDS_COLLECTION,

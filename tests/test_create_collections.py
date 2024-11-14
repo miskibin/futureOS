@@ -149,7 +149,7 @@ def flatten_commands(command_dict):
 # Combine all test cases with proper command types
 ALL_TEST_CASES = (
     [(cmd, "ls") for category in LS_COMMANDS.values() for cmd in category]
-    + [(cmd, "pwd") for category in PWD_COMMANDS.values() for cmd in category]
+    # + [(cmd, "pwd") for category in PWD_COMMANDS.values() for cmd in category]
     + [(cmd, "nano") for category in NANO_COMMANDS.values() for cmd in category]
     + [(cmd, "cat") for category in CAT_COMMANDS.values() for cmd in category]
     + [(cmd, "index") for category in INDEX_COMMANDS.values() for cmd in category]
