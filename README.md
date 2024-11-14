@@ -1,6 +1,22 @@
 # FutureOS
 
-FutureOS is a next-generation AI-powered command-line (POC) operating system that understands natural language and can interact with files and system resources intelligently.
+My take of how Operating systems will be build in the future.
+
+Currently there are a lot of tools for both windows and mac, like: 
+- [claude computer use](https://www.anthropic.com/news/3-5-models-and-computer-use)
+- [github copilot](https://copilot.github.com)
+or new siri on the mac.
+
+But those are just tools that implement thiers own method of indexing and searching files, and they are not integrated with the OS.
+qWell. Guess what. Now it is. (It is POC).
+
+What if every utility in the OS had access to `vector search` for collection for all `files`, `directoires`, `pictures` and so on. All those would be indexed by the OS every time a file is created or modified.
+What if every utility had access to `AI chain` like lanchain chain, that would be deeply integrated into the OS, and every command would be able to use it.
+
+Let's get further
+Why force the user to remember what command should he use with what parameters and arguments. 
+If we create descriptive docstring for the command, we could create vector store with all commands, and then just choose best command for user input. He does not even needs to know the exact command name.
+Yep but it seems like without proper testing user wouldn't like it. I know. That is why there are [multiple tests](/tests/test_create_collections.py) for every command with output easy to parse by llm.
 
 ![image](https://github.com/user-attachments/assets/4bdf7e12-0f9b-4f68-a588-4aed67ec6d45)
 
@@ -17,22 +33,6 @@ FutureOS is a next-generation AI-powered command-line (POC) operating system tha
 "show me my financial data"
 "I don't need this file anymore"
 ```
-
-### 🔍 Intelligent Search
-
-- Vector-based search for files and directories
-- Content-aware file finding
-- Understands semantic meaning, not just keywords
-- Automatically indexes file contents for smart searching
-
-### 🤖 AI-Powered Commands
-
-Every command in FutureOS is AI-enabled with:
-
-- Natural language processing
-- Content understanding
-- Context awareness
-- Intelligent decision making
 
 ### 🧠 Core AI Capabilities
 

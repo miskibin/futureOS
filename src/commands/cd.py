@@ -26,7 +26,6 @@ class cd(Command):
         - Switch to directory X
         - Take me to folder X
     """
-
     def _configure_parser(self) -> None:
         self.parser.add_argument(
             "directory",
@@ -35,23 +34,10 @@ class cd(Command):
             type=str,
             help="Directory to change to",
         )
-
     def execute(self, args: Any) -> None:
         try:
-            directory = args.directory
-            if args.query:
-                directory = self.get_directory(args.query)
-                if directory:
-                    self.print(f"\nGoing to: {directory}", style="green")
-                else:
-                    self.print("No matching directory found.", style="red")
-                    return
-
-            if directory == "~":
-                target_path = constants.BASE_PATH / Path("home")
-            else:
-                target_path = resolve_path(directory)
-
+            directory = self.get_directory(args.query) if args.query else args.directory
+            target_path = constants.BASE_PATH / Path("home") if directory == "~" else resolve_path(directory)
             if target_path.is_dir():
                 constants.CURRENT_DIRECTORY = target_path
                 self.print(f"Changed to {target_path}", style="green")
