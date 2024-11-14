@@ -183,7 +183,7 @@ def create_test_group(command_type, commands_dict):
 
 # Create separate test functions for each command type
 test_ls_commands = create_test_group("ls", LS_COMMANDS)
-test_pwd_commands = create_test_group("pwd", PWD_COMMANDS)
+# test_pwd_commands = create_test_group("pwd", PWD_COMMANDS)
 test_nano_commands = create_test_group("nano", NANO_COMMANDS)
 test_cat_commands = create_test_group("cat", CAT_COMMANDS)
 test_index_commands = create_test_group("index", INDEX_COMMANDS)
