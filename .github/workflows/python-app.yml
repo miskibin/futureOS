@@ -40,6 +40,6 @@ jobs:
       - name: Install package
         run: uv pip install -e .
       - name: Test with pytest
-        run: uv run pytest tests --cov=src
+        run: uv run pytest tests 
       - name: Minimize uv cache
         run: uv cache prune --ci
