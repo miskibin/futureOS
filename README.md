@@ -1,3 +1,7 @@
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/futureos)
+![PyPI - Version](https://img.shields.io/pypi/v/futureos)
+![Job](https://github.com/miskibin/futureOS/actions/workflows/python-app.yml/badge.svg)
+
 # FutureOS 🚀
 
 My take on how Operating Systems will be built in the future.
