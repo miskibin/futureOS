@@ -27,17 +27,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install uv
 
-    - name: Install dependencies with uv
+    - name: Install dependencies with uv and run tests
       run: |
         uv venv
         uv sync
-
-    - name: Install pytest separately
-      run: |
-        pip install pytest
-
-    - name: Add futureos to PYTHONPATH and run tests
-      env:
-        PYTHONPATH: ${{ github.workspace }}
-      run: |
         pytest
