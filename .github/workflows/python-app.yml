@@ -36,7 +36,7 @@ jobs:
             uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
             uv-${{ runner.os }}
       - name: Install dependencies
-        run: uv sync --all-extras --dev --frozen
+        run: uv sync
       - name: Install package
         run: uv pip install -e .
       - name: Test with pytest
