@@ -1,9 +1,0 @@
-Team sync - March 15, 2024
-- Discussed Q2 roadmap
-- New feature priorities
-- Team capacity planning
-
-Action items:
-1. Sarah to finalize specs
-2. Mike to estimate backend work
-3. Follow up next week

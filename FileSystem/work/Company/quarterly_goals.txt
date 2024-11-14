@@ -1,6 +1,0 @@
-Q2 2024 Objectives:
-
-1. Launch mobile app v2.0
-2. Achieve 95% customer satisfaction
-3. Reduce technical debt by 20%
-4. Implement automated testing

@@ -8,4 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
-./FileSystem
+/FileSystem
+/FileSystem/**
+/FileSystem/
