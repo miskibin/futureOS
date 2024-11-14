@@ -112,6 +112,10 @@ pip install futureos
 python -m futureos
 ```
 
+> [!IMPORTANT]  
+> To use FutureOS, ensure you have Ollama installed with the `gemma2:2b` model. For optimal performance, CUDA should be enabled on your system.
+
+
 ## 🤝 Contributing
 
 We welcome contributions in:
