@@ -1,6 +1,6 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/futureos)
 ![PyPI - Version](https://img.shields.io/pypi/v/futureos)
-![example workflow]([https://github.com/github/docs](https://github.com/miskibin/futureOS/actions/workflows/python-app.yml/badge.svg)
+![Job](https://github.com/miskibin/futureOS/actions/workflows/python-app.yml/badge.svg)
 
 # FutureOS 🚀
 
