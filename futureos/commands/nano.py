@@ -1,8 +1,8 @@
 from typing import Any
 from pathlib import Path
 import curses
-from commands.command import Command
-from utils.path_utils import resolve_path
+from futureos.commands.command import Command
+from futureos.utils.path_utils import resolve_path
 from langchain_core.prompts import ChatPromptTemplate
 from rich.status import Status
 from rich.console import Console

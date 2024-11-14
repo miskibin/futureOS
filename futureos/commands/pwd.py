@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
-from commands.command import Command
-import constants
+from futureos.commands.command import Command
+import futureos.constants
 
 
 class pwd(Command):

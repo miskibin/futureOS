@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Optional, Any
 from pathlib import Path
 from langchain_core.prompts import ChatPromptTemplate
-from commands.command import Command
-import constants
-from utils.path_utils import get_all_directories, get_relative_path, resolve_path
+from futureos.commands.command import Command
+import futureos.constants
+from futureos.utils.path_utils import get_all_directories, get_relative_path, resolve_path
 
 
 class ls(Command):

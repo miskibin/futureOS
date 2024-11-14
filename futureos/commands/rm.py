@@ -1,8 +1,8 @@
 
 from typing import Any
 from pathlib import Path
-from commands.command import Command
-from utils.path_utils import resolve_path
+from futureos.commands.command import Command
+from futureos.utils.path_utils import resolve_path
 
 class rm(Command):
     """

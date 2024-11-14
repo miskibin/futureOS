@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Any
-from commands.command import Command
-import constants
-from utils.path_utils import resolve_path
+from futureos.commands.command import Command
+import futureos.constants
+from futureos.utils.path_utils import resolve_path
 
 
 class cd(Command):

@@ -1,6 +1,6 @@
 from typing import Any
-from commands.command import Command
-from init.create_collections import initialize_directories_collection, initialize_files_collection
+from futureos.commands.command import Command
+from futureos.init.create_collections import initialize_directories_collection, initialize_files_collection
 
 
 class index(Command):

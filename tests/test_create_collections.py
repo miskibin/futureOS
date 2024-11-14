@@ -3,8 +3,8 @@ from rich import print
 from rich.table import Table
 from rich.console import Console
 from rich.panel import Panel
-from commands import COMMAND_LIST
-from init.create_collections import initialize_commands, COMMANDS_COLLECTION
+from futureos.commands import COMMAND_LIST
+from futureos.init.create_collections import initialize_commands, COMMANDS_COLLECTION
 
 
 class TestCategories:
@@ -193,7 +193,7 @@ def print_test_summary(results):
     """Print a beautiful summary of test results with proper table sizing"""
     console = Console()
     console_width = console.width or 100
-    table_width = min(console_width - 4, 100)  
+    table_width = min(console_width - 4, 100)
 
     table = Table(
         title="Command Recognition Test Results",

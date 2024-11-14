@@ -1,7 +1,7 @@
 from typing import Any
 from pathlib import Path
-from commands.command import Command
-from utils.path_utils import get_files_in_directory, resolve_path
+from futureos.commands.command import Command
+from futureos.utils.path_utils import get_files_in_directory, resolve_path
 
 
 class cat(Command):

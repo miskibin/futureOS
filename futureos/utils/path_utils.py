@@ -1,6 +1,6 @@
 from itertools import chain
 from pathlib import Path
-import constants
+import futureos.constants
 
 
 def get_relative_path(path: Path) -> str:

@@ -5,13 +5,13 @@ from rich.console import Console
 from rich.status import Status
 from typing import Optional, Any
 from langchain_core.prompts import ChatPromptTemplate
-from utils.console_manager import future_console as console
-from init.create_collections import FILES_COLLECTION
-from init.create_collections import DIRECTORIES_COLLECTION
-import constants
+from futureos.utils.console_manager import future_console as console
+from futureos.init.create_collections import FILES_COLLECTION
+from futureos.init.create_collections import DIRECTORIES_COLLECTION
+import futureos.constants
 from langchain_core.runnables import RunnablePassthrough
 
-from utils.path_utils import get_relative_path
+from futureos.utils.path_utils import get_relative_path
 
 
 class Command(ABC):

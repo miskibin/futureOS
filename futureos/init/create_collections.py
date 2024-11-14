@@ -4,8 +4,8 @@ import chromadb.server
 from loguru import logger
 
 
-import constants
-from utils.path_utils import (
+import futureos.constants
+from futureos.utils.path_utils import (
     get_all_directories,
     get_files_in_directory,
     get_relative_path,
