@@ -48,7 +48,7 @@ RM_COMMANDS = {
         "Got to delete this file",
     ],
     TestCategories.COMPLEX: [
-        "There's this config file with database stuff I need to get rid of",
+        "There's config file with database stuff that I need to delete",
         "Help me clean up these old API key files",
         "Need to remove some sensitive data files",
         "Got an old password file that needs to be deleted",
