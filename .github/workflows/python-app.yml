@@ -35,6 +35,4 @@ jobs:
 
     - name: Add futureos to PYTHONPATH and run tests
       run: |
-        cd tests
-        PYTHONPATH=$PYTHONPATH:$(pwd)/../futureos 
         python -m pytest 
