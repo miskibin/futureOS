@@ -61,7 +61,7 @@ class Command(ABC):
         filename = results["ids"][0][0]
         if results["distances"][0][0] > max_distance:
             self.print(
-                f"I did not find a good match for the question in the files. Distance: {results['distances'][0][0]:.2f} > max Distance: {max_distance}",
+                f"I did not find a good match for the question in the files. Distance: {results['distances'][0][0]:.3f} > max Distance: {max_distance}",
                 style="yellow",
             )
             return
