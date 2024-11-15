@@ -5,8 +5,6 @@ from futureos.commands.command import Command
 from futureos.utils.editor import TextEditor
 from futureos.utils.path_utils import get_relative_path, resolve_path
 from langchain_core.prompts import ChatPromptTemplate
-from rich.status import Status
-from rich.console import Console
 
 
 class nano(Command):
