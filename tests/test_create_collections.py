@@ -30,8 +30,7 @@ LS_COMMANDS = {
         "Could you show me the files in this location?",
     ],
     TestCategories.COMPLEX: [
-        "I've got some project files somewhere in this folder, can you show me what's there?",
-        "Need to check my homework directory, what files do we have?",
+              "Need to check my homework directory, what files do we have?",
         "Been working on some documents, can you list them for me?",
         "My backup folder should have some files, can you check?",
         "What is in my code directory",
@@ -113,10 +112,26 @@ CAT_COMMANDS = {
         "Hey, what's this file about?",
         "Could you peek inside notes.txt for me?",
         "What's the story with this file?",
-        "Mind reading through this for me?",
+        "Mind reading this file through this for me?",
     ],
 }
 
+TREE_COMMANDS = {
+    TestCategories.BASIC: [
+        "Show me the directory structure",
+        "Display a tree view of my files",
+        "What does my project structure look like?",
+        "Can you show me the file hierarchy?",
+        "I need to see the folder structure",
+    ],
+    TestCategories.COMPLEX: [
+        "I've got some project files somewhere in this here, can you show me what's there?",
+        "How is my project organized in terms of directories?",
+        "Show me the hierarchical view of my files and folders",
+        "What is the layout of my project directories?",
+        "Can you display the tree view of this directory?",
+    ],
+}
 
 def flatten_commands(command_dict):
     """Flatten nested command dictionary into list of (query, expected) tuples"""
@@ -134,6 +149,7 @@ ALL_TEST_CASES = (
     + [(cmd, "nano") for category in NANO_COMMANDS.values() for cmd in category]
     + [(cmd, "cat") for category in CAT_COMMANDS.values() for cmd in category]
     + [(cmd, "rm") for category in RM_COMMANDS.values() for cmd in category]
+    + [(cmd, "tree") for category in TREE_COMMANDS.values() for cmd in category]
 )
 
 
@@ -166,6 +182,7 @@ test_ls_commands = create_test_group("ls", LS_COMMANDS)
 # test_pwd_commands = create_test_group("pwd", PWD_COMMANDS)
 test_nano_commands = create_test_group("nano", NANO_COMMANDS)
 test_cat_commands = create_test_group("cat", CAT_COMMANDS)
+test_tree_commands = create_test_group("tree", TREE_COMMANDS)
 
 
 def print_test_summary(results):

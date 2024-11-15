@@ -3,6 +3,7 @@ import shlex
 from pathlib import Path
 import sys
 from typing import Optional
+import importlib.metadata  # Add this import
 
 import chromadb.server
 from futureos.init.initialize_filesystem import initialize_filesystem
@@ -102,13 +103,17 @@ def main():
     initialize_commands(COMMAND_LIST)
     initialize_files_collection()
     initialize_directories_collection()
+
+    # Get version of the installed package
+    version = importlib.metadata.version("futureos")
+
     # Show welcome message
     console.clear()
     console.show_panel(
         "Welcome to [highlight]FutureOS[/highlight]\n"
         "Your AI-powered operating system\n\n"
         "Type [command]help[/command] for available commands",
-        "⚡ FutureOS v1.0",
+        f"⚡ FutureOS v{version}",
     )
 
     while True:

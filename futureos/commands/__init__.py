@@ -1,5 +1,6 @@
 from .ls import ls
 from .pwd import pwd
+from .tree import tree
 from .cd import cd
 from .cat import cat
 from .nano import nano
@@ -15,6 +16,7 @@ COMMAND_LIST = {
     "answer": answer,
     "rm": rm,
     "cls": cls,
+    "tree": tree,
     # "pwd": pwd,
 }
 
