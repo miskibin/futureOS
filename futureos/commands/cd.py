@@ -21,6 +21,7 @@ class cd(Command):
         - Change directory to X
         - Go to folder X
         - go to the X dir
+        - go to X
         - Move to directory X
         - Navigate to directory X
         - Switch to directory X

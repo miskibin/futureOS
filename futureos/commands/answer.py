@@ -23,7 +23,7 @@ class answer(Command):
             self.print("Please provide a question to answer", style="red")
             return
         question = args.query
-        filename = self.get_file(question, max_distance=1.7)
+        filename = self.get_file(question, max_distance=1.88)
         if not filename:
             return
         resolved_path = resolve_path(filename)
